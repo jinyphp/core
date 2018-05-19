@@ -4,12 +4,23 @@ namespace Jiny\Core;
 
 class Controller
 {
-    /**
-     * @return void
-     */
-    public function __construct()
+    protected $_view;
+    protected $_model;
+
+    public function view($viewName, $data=[])
     {
-        echo __CLASS__." 객체가 생성이 되었습니다.<br>";
+        //echo "View 객체를 생성합니다.<br>";
+        $this->_view = new \Jiny\Core\View($viewName, $data);
+        return $this->_view;
+    }
+
+    public function model($modelName, $data=[])
+    {
+        if (file_exists(MODELS. $modelName. '.php')) {
+            // require MODEL. $modelName. '.php';
+            // 오토로드를 통하여 파일 자동로드
+            $this->_model = new $modelName;
+        }
     }
 
 }

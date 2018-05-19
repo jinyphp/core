@@ -1,17 +1,23 @@
 {
     "name": "jiny/core",
     "description": "jiny framwork core",
+    "keywords": [
+        "jiny",
+        "framwork"
+    ],
+    "homepage": "http://jiny.hojin.io",
     "type": "library",
     "license": "MIT",
     "authors": [
         {
             "name": "hojinlee",
-            "email": "infohojin@gmail.com"
+            "email": "infohojin@gmail.com",
+            "homepage": "http://hojin.io"
         }
     ],
     "minimum-stability": "stable",
     "require": {
-        
+        "php": ">= 7.0"
     },
     "autoload": {
         "psr-4": {
