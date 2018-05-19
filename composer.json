@@ -1,0 +1,21 @@
+{
+    "name": "jiny/core",
+    "description": "jiny framwork core",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "hojinlee",
+            "email": "infohojin@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        
+    },
+    "autoload": {
+        "psr-4": {
+            "Jiny\\Core\\": "src/"
+        }
+    }
+}
