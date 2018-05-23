@@ -46,7 +46,7 @@ class Application
                 // echo "기본 컨트롤러로 대체하여 실행이 됩니다.<br>";
 
                 // 인스턴스를 기본 컨트롤러로 재저장 합니다.
-                $this->_controller = new \App\Core\PageController;
+                $this->_controller = new \Jiny\Core\PageController;
                 $this->_body = $this->_controller->index();                      
 
             }
