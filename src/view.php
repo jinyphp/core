@@ -77,7 +77,8 @@ class View {
         // echo __METHOD__."를 호출합니다.<br>";
         // 해더 HTML의 파일의 경로를 확인합니다.
         // 지정한 경로에 상단해더 파일이 있는지 확인후에 값을 읽어옵니다.
-        $filename = $GLOBALS['config']['theme']['path']. DS. $GLOBALS['config']['theme']['name']. DS. $GLOBALS['config']['theme']['header'];
+        $filename = $this->headerPath();
+
         if (file_exists($filename)) {
             $this->_header = file_get_contents($filename);
         } else {
@@ -87,6 +88,15 @@ class View {
         return $this;
     }
 
+    public function headerPath()
+    {
+        $filename = Registry::name("Config")()['conf']['theme']['path']. DS;
+        $filename .= Registry::name("Config")()['conf']['theme']['name']. DS;
+        $filename .= Registry::name("Config")()['conf']['theme']['header'];
+
+        return $filename;
+    }
+
     // 공통적으로 처리되는 하단 내용을 읽어옵니다.
     // 읽어올 설정파일은 config에 설정되어 있습니다.
     public function footer()
@@ -94,7 +104,8 @@ class View {
         // echo __METHOD__."를 호출합니다.<br>";
         // 하단 HTML의 파일의 경로를 확인합니다.
         // 지정한 경로에 하단푸터 파일이 있는지 확인후에 값을 읽어옵니다.
-        $filename = $GLOBALS['config']['theme']['path']. DS. $GLOBALS['config']['theme']['name']. DS. $GLOBALS['config']['theme']['footer'];
+        $filename = $this->footerPath();
+
         if (file_exists($filename)) {
             $this->_footer = file_get_contents($filename);
         } else {
@@ -104,7 +115,13 @@ class View {
         return $this;
     }
 
+    public function footerPath()
+    {
+        $filename = Registry::name("Config")()['conf']['theme']['path']. DS;
+        $filename .= Registry::name("Config")()['conf']['theme']['name']. DS;
+        $filename .= Registry::name("Config")()['conf']['theme']['footer'];
 
-
+        return $filename;
+    }
 
 }
