@@ -18,7 +18,10 @@ class Application
     public $_routes = [];
 
     public $Config;
-    private $Registry;
+    public $Registry;
+    public $boot;
+
+    public $Theme;
 
     // 생성자 매직 매서드
     public function __construct($Registry)
@@ -30,11 +33,17 @@ class Application
         $this->Config = $this->Registry->get("CONFIG");        
 
         // 부트스트래핑
-        new Bootstrap($this);   
+        $boot = new Bootstrap($this);   
         
         // 라우트를 처리합니다.
         new Route($this);     
         
+        
+        // 테마 클래스를 생성합니다.
+        // Registry pool에 등록합니다
+        $this->Theme = $this->Registry->createInstance("\Jiny\Theme\Theme","Theme", $this);
+
+
         if (!empty($this->_controller)) {
             // 컨트롤러 호출
             $this->controller();
@@ -102,7 +111,7 @@ class Application
      */
     private function pageController()
     {
-        $this->_controller = $this->instanceFactory("\Jiny\Core\PageController");
+        $this->_controller = $this->instanceFactory("\Jiny\Pages\Page");
         $this->_body = $this->_controller->index();  
     }
 

@@ -65,10 +65,18 @@ class Bootstrap
             $this->Application->_uri = NULL;
         }
 
+        // $this->Application->_uri = $uris;
+        $this->firstURI($uris);
+        return $this;
+    }
+
+    public function firstURI($uris)
+    {
+     
         // URI 첫번째 인자가 언어-국가 설정
         if ($this->_configSite['uriLANGUAGE'] || $this->_configSite['uriCOUNTRY']) {
             
-            $this->setParserLanguage($uris[0])->setParserCountry($uris[0]);
+            // $this->setParserLanguage($uris[0])->setParserCountry($uris[0]);
 
             for ($i=1, $j=0; $i<count($uris); $i++, $j++) {
                 $this->Application->_uri[$j] = $uris[$i];
@@ -77,8 +85,7 @@ class Bootstrap
         } else {
             $this->Application->_uri = $uris;
         }
-
-        return $this;
+     
     }
 
     /**

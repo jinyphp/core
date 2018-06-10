@@ -45,7 +45,7 @@ class Registry
     /**
      * 인스턴스를 생성 등록합니다.
      */
-    public function createInstance($name, $key=NULL)
+    public function createInstance($name, $key=NULL, $instance=NULL)
     {
         // echo __METHOD__."<br>";
         // echo $name."=".$key."<br>";
@@ -56,7 +56,12 @@ class Registry
             $obj = $name::instance(); 
         } else {
             // 인스턴스 생성
-            $obj = new $name;
+            if($instance){
+                $obj = new $name ($instance);
+            } else {
+                $obj = new $name;
+            }
+            
         }
 
         if ($key) {

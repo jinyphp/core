@@ -1,6 +1,6 @@
 <?php
 
-namespace Jiny\Core;
+namespace Jiny\Core\Views;
 
 use \Jiny\Core\Registry\Registry;
 
