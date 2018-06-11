@@ -2,8 +2,10 @@
 namespace Jiny\Core\Views;
 
 use \Jiny\Core\Registry\Registry;
+use Liquid\Template;
 
-class View {
+class View extends AbstractView 
+{
     protected $view_file;
     protected $view_data;
 
@@ -20,21 +22,33 @@ class View {
 
     private $conf;
     private $userController;
+    
+    // trait...
+    use ViewFile, Liquid;
+
+    /**
+     * 머리말 처리
+     */
+    use FrontMatter, MarkDown, Prefix;
+
+    public $Liquid;
 
     public function __construct($userController)
     {
         // echo "클래스 ".__CLASS__." 객체 인스턴스가 생성이 되었습니다.<br>";
         $this->userController = $userController;
 
-        $this->view_file = $this->userController->viewFile;
-        $this->view_data = $this->userController->viewData;
+        $this->setViewFile( $this->userController->viewFile );
+        $this->setViewData( $this->userController->viewData );
 
         // 객체참조 개선을 위해서 임시저장합니다.
         $this->conf = Registry::get("CONFIG");
 
         // 매소드 호출 횟수를 줄이기 위해서 임시변수
         $this->Theme = Registry::get("Theme");
-        $this->view_data['menu'] = $this->userController->Menu->getTree();
+        $this->view_data['menus'] = $this->userController->Menu->getTree();
+
+        $this->$Liquid = new Template();
 
     }
 
@@ -43,16 +57,37 @@ class View {
     public function create($data=[])
     {
         // echo __METHOD__."를 호출합니다.<br>";
+
+        // 뷰파일을 읽어 옵니다.
         $this->loadViewFile();
 
         // 머리말을 체크합니다.
         // 문서에서 머리말을 분리합니다.
         $this->frontMatter($this->_body);
 
+        $this->preProcessor();
+
+        // 템플릿 처리
+        $this->_body = $this->tamplate($this->_body, $this->view_data);
+        
+
+        // 페이지 레이아웃 처리
+        $this->layoutRender();
+
+        return $this;
+    }
+
+
+
+    /**
+     * 문서가 markdown, word 파일일때 변환처리르 합니다.
+     */
+    public function preProcessor()
+    {
         // 페이지를 처리합니다.
         switch ($this->_pageType) {
             case 'htm':
-                //echo "html 파일을 출력합니다.<br>";
+                //echo "html 파일을 출력합니다.<br>";             
                 break;
             case 'md':
                 //echo "md 파일을 출력합니다.<br>";
@@ -60,8 +95,10 @@ class View {
                 $this->markDown();
                 break;
         }
+    }
 
-        // 페이지 레이아웃 처리
+    public function layoutRender()
+    {
         if($this->_frontMatter['layout']){
             $pageLayout = $this->Theme->loadFile( $this->_frontMatter['layout'] );
             if ($pageLayout) {
@@ -69,21 +106,26 @@ class View {
                 $this->_body = str_replace("{{ content }}", $this->_body, $pageLayout);
             }
         }
-
-        return $this;
     }
 
 
-    public function loadViewFile()
+    public function tamplate($body, $data)
     {
-        $filename = HTMLS. $this->view_file;
-        $this->_body = $this->pageFile($filename);
+        switch ($this->conf->data("site.template")) {
+            case 'Liquid':
+                return $this->Liquid($body, $data);
+        }
+
+        return $body;
     }
+
+    
 
 
 
     const PREFIX_START = "{%%";
     const PREFIX_END = "%%}";
+
     public function pageRender($body)
     {
         $prefixdCode = $this->Theme->setPrefix(self::PREFIX_START, self::PREFIX_END)->preFixs($body);
@@ -108,10 +150,7 @@ class View {
         return $body;
     }
 
-    /**
-     * 머리말 처리
-     */
-    use FrontMatter;
+    
 
 
     /**
@@ -123,6 +162,9 @@ class View {
         // 해더를 생성합니다.
         $this->Theme->header();
         $this->_header = $this->Theme->headerRender($this->view_data);
+
+        $this->_header = $this->tamplate($this->_header, $this->view_data);
+      
 
         // 푸터를 생성합니다.
         $this->_footer = $this->Theme->footer()->footerRender();

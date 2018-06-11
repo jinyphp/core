@@ -61,8 +61,10 @@ class Bootstrap
         $request = trim($this->_REQUEST_URI, '/');
         if (!empty($request)) {
             $uris = explode('/', $request);
+
         } else {
             $this->Application->_uri = NULL;
+            $uris = NULL;
         }
 
         // $this->Application->_uri = $uris;
