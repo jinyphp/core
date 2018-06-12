@@ -97,6 +97,11 @@ class Registry
         self::$_instances[$key] = $instance;
     }
 
+    public function setInstance($key, $instance)
+    {
+        $this->_instances[$key] = $instance;
+    }
+
     /**
      * 인스턴스를 삭제합니다.
      */

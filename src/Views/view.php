@@ -6,221 +6,45 @@ use Liquid\Template;
 
 class View extends AbstractView 
 {
-    protected $view_file;
-    protected $view_data;
+    private $Application;
 
-    protected $_body;
-    protected $_pageType;
-
+    
     protected $_header;
     protected $_footer;
-
     protected $Menu;
-
-    private $Theme;
-    private $_themeENV;
-
-    private $conf;
-    private $userController;
+    
+    private $_themeENV;    
+    private $Controller;
     
     // trait...
-    use ViewFile, Liquid;
-
-    /**
-     * 머리말 처리
-     */
-    use FrontMatter, MarkDown, Prefix;
-
-    public $Liquid;
-
-    public function __construct($userController)
-    {
-        // echo "클래스 ".__CLASS__." 객체 인스턴스가 생성이 되었습니다.<br>";
-        $this->userController = $userController;
-
-        $this->setViewFile( $this->userController->viewFile );
-        $this->setViewData( $this->userController->viewData );
-
-        // 객체참조 개선을 위해서 임시저장합니다.
-        $this->conf = Registry::get("CONFIG");
-
-        // 매소드 호출 횟수를 줄이기 위해서 임시변수
-        $this->Theme = Registry::get("Theme");
-        $this->view_data['menus'] = $this->userController->Menu->getTree();
-
-        $this->$Liquid = new Template();
-
-    }
-
-    // View HTML파일을 로드합니다. 읽어온 내용은 _body에 저장을 합니다.
-    // HTMLS 경로디렉토리
-    public function create($data=[])
-    {
-        // echo __METHOD__."를 호출합니다.<br>";
-
-        // 뷰파일을 읽어 옵니다.
-        $this->loadViewFile();
-
-        // 머리말을 체크합니다.
-        // 문서에서 머리말을 분리합니다.
-        $this->frontMatter($this->_body);
-
-        $this->preProcessor();
-
-        // 템플릿 처리
-        $this->_body = $this->tamplate($this->_body, $this->view_data);
-        
-
-        // 페이지 레이아웃 처리
-        $this->layoutRender();
-
-        return $this;
-    }
-
-
-
-    /**
-     * 문서가 markdown, word 파일일때 변환처리르 합니다.
-     */
-    public function preProcessor()
-    {
-        // 페이지를 처리합니다.
-        switch ($this->_pageType) {
-            case 'htm':
-                //echo "html 파일을 출력합니다.<br>";             
-                break;
-            case 'md':
-                //echo "md 파일을 출력합니다.<br>";
-                // 내용을 마크다운 -> html로 변환합니다.
-                $this->markDown();
-                break;
-        }
-    }
-
-    public function layoutRender()
-    {
-        if($this->_frontMatter['layout']){
-            $pageLayout = $this->Theme->loadFile( $this->_frontMatter['layout'] );
-            if ($pageLayout) {
-                echo "레이아웃을 적용합니다.<br>";
-                $this->_body = str_replace("{{ content }}", $this->_body, $pageLayout);
-            }
-        }
-    }
-
-
-    public function tamplate($body, $data)
-    {
-        switch ($this->conf->data("site.template")) {
-            case 'Liquid':
-                return $this->Liquid($body, $data);
-        }
-
-        return $body;
-    }
-
-    
-
-
+    use ViewFile, ViewCreate, ViewShow;
 
     const PREFIX_START = "{%%";
     const PREFIX_END = "%%}";
 
-    public function pageRender($body)
+    public function __construct($Controller)
     {
-        $prefixdCode = $this->Theme->setPrefix(self::PREFIX_START, self::PREFIX_END)->preFixs($body);
-        foreach ($prefixdCode as $value) {
+        // echo "클래스 ".__CLASS__." 객체 인스턴스가 생성이 되었습니다.<br>";
+        $this->Controller = $Controller;
 
-            switch ($value[0]) {
-                case '#':
-                  
-                    // 환경변수의 값을 출력합니다.
-                    $data = $this->conf->data( substr($value, 1) );
-                    $body = str_replace(
-                        self::PREFIX_START." ".$value." ".self::PREFIX_END, 
-                        $data, 
-                        $body);
-                       
-                    break;
-            }
+        // 컨트롤러의 데이터를 
+        // 뷰로 전달합니다.
+        $this->setViewFile( $this->Controller->viewFile );
+        $this->setViewData( $this->Controller->viewData );
 
-        }
-    
+        $this->instanceInit();
 
-        return $body;
-    }
+        // 메뉴 데이터를 읽어옵니다.
+        $this->view_data['menus'] = $this->Controller->Menu->getTree();
+        /*
+        $this->mergeViewData($this->Controller->Menu->getTree());
+        // 
+        //print_r($this->Controller->Menu->getTree());
+        echo "병합된 배열<br>";
+        print_r($this->getViewData());
+        echo "<hr>";
+        */
 
-    
-
-
-    /**
-     * 화면을 출력합니다.
-     */
-    public function show()
-    {
-        // echo __METHOD__."를 호출합니다.<br>";
-        // 해더를 생성합니다.
-        $this->Theme->header();
-        $this->_header = $this->Theme->headerRender($this->view_data);
-
-        $this->_header = $this->tamplate($this->_header, $this->view_data);
-      
-
-        // 푸터를 생성합니다.
-        $this->_footer = $this->Theme->footer()->footerRender();
-        
-        // 레이아웃을 체크합니다.
-        $layoutBody = $this->Layout($this->Theme->_env['layout']);
-
-        // 랜더링을 처리합니다.
-        $layoutBody = $this->pageRender($layoutBody);
-
-        echo $layoutBody;          
-             
-    }
-
-    /**
-     * 페이지 레이아웃이 설정되어 있는 경우
-     * 레이아웃으로 래핑합니다.
-     */
-    public function Layout($layout=NULL)
-    {
-        if (isset($layout)) {
-            // 레이아웃 파일을 읽어옵니다.
-            $layoutBody = $this->Theme->layout();
-
-            // 해더를 치환합니다.
-            $layoutBody = str_replace(
-                $this->Theme->_env['_header'], 
-                $this->_header, 
-                $layoutBody);
-
-            // 푸터를 치환합니다.
-            $layoutBody = str_replace(
-                $this->Theme->_env['_footer'], 
-                $this->_footer, 
-                $layoutBody);
-
-            // 본문을 치환합니다.    
-            $layoutBody = str_replace(
-                $this->Theme->_env['_content'], 
-                $this->_body, 
-                $layoutBody);
-
-        } else {
-            // 레이아웃이 없는 경우 바로 출력합니다.
-            $layoutBody = $this->_header.$this->_body.$this->_footer;         
-        }
-        return $layoutBody;
-    }
-
-    public function getAction()
-    {
-        // echo __METHOD__."를 호출합니다.<br>";
-        // 반환되는 값은 배열타입 입니다.
-        // 배열의 1을 반환합니다.
-        // echo "view_file = ". $this->view_file. "<br>";
-        return (explode('\\', $this->view_file)[1]);
     }
 
 }

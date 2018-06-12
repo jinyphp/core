@@ -3,9 +3,13 @@ namespace Jiny\Core\Boot;
 
 class Bootstrap
 {
+    // 인스턴스
     private $Application;
+    private $Locale;
 
+    // 변수
     private $_REQUEST_URI;
+    private $_REQUEST;
     private $_baseNamespace = "\Jiny\Core\\";
     private $_language, $_country;
 
@@ -13,6 +17,9 @@ class Bootstrap
     const COUNTRY = TRUE;
 
     private $_configSite;
+
+    // trait
+    use URI;
 
     public function __construct($app)
     {
@@ -24,132 +31,55 @@ class Bootstrap
         $this->_configSite = $this->Application->Config->data("site");
         //echo "skip uriBase = ".$uriBase."<br>";
 
+        $this->Locale = new \Jiny\Locale\Locale($app);
+
         // ReWrite로 전달된 부스트래핑 URL을 분석합니다. 
-        $this->uri();
-        $this->explodeURI();
-        //->prepareURL();
-    }
+        // REQUEST 값을 읽어 옵니다.
+        $REQUEST = $this->getREQUEST();
 
-    /**
-     * 요청한 URI값을 읽어 옵니다.
-     * $base는 url 시작이 부분을 스킵처리 합니다.
-     */
-    private function uri()
-    {
-        // GET 처리
-        // ? 를 기준으로 URI를 분리합니다.
-        $REQUEST = explode('?', $_SERVER['REQUEST_URI']);
+        // baseurl을 제외한 처리 URL을 반환합니다.
+        $baseurl = $this->_configSite['BASEURL'];
+        $this->_REQUEST = $this->getURL($REQUEST, $baseurl);
+        //echo "REQUEST = ".$this->_REQUEST."<br>";
 
-        if ( $this->_configSite['uriBase'] ) {
-            $this->_REQUEST_URI = str_replace($this->_configSite['uriBase'], "", $REQUEST[0]);
-        } else {
-            $this->_REQUEST_URI = $REQUEST[0];
-        }
+        // URI를 배열화 합니다.
+        $this->_urls = $this->explodeURI( $this->_REQUEST );        
+        // $this->_locale = $this->isLocale($this->_urls);
+        $this->_urlReals = $this->uriREAL($this->_urls);
 
-        //echo "기본 URL 시작은 ". $this->_REQUEST_URI. " 입니다.<br>";
-        // echo $base." 는 제외합니다.<br>";
+        //echo "<pre>";
+        //print_r($this->_urls);
+        //echo "<hr>";
+        //print_r($this->_urlReals);
+        //echo "</pre>";
 
-        return $this;
-    }
 
-    /**
-     * 입력한 URI를 구분하여, 배열화 합니다.
-     */
-    protected function explodeURI()
-    {
-        // echo "URL을 분석하여 explod합니다.<br>";
-        $request = trim($this->_REQUEST_URI, '/');
-        if (!empty($request)) {
-            $uris = explode('/', $request);
-
-        } else {
-            $this->Application->_uri = NULL;
-            $uris = NULL;
-        }
-
-        // $this->Application->_uri = $uris;
-        $this->firstURI($uris);
-        return $this;
-    }
-
-    public function firstURI($uris)
-    {
-     
-        // URI 첫번째 인자가 언어-국가 설정
-        if ($this->_configSite['uriLANGUAGE'] || $this->_configSite['uriCOUNTRY']) {
-            
-            // $this->setParserLanguage($uris[0])->setParserCountry($uris[0]);
-
-            for ($i=1, $j=0; $i<count($uris); $i++, $j++) {
-                $this->Application->_uri[$j] = $uris[$i];
-            }
-
-        } else {
-            $this->Application->_uri = $uris;
-        }
-     
-    }
-
-    /**
-     * uri 첫번째 인자에서 언어 코드를 분리합니다.
-     */
-    private function setParserLanguage($code)
-    {
-        $lang = explode('-', $code);
-        if (isset($lang[0])) {
-            $this->_country = $this->isLanguage($lang[0]);
-            //echo "언어설정=".$this->_country."를 설정합니다.<br>";         
-        }
-        return $this;
-    }
-
-    public function isLanguage($code)
-    {
-        if($code == "ko") return $code;
-        else return NULL;
-    }
-
-    /**
-     * uri 첫번째 인자에서 국가 코드를 분리합니다.
-     */
-    private function setParserCountry($code)
-    {
-        $lang = explode('-', $code);
-        if (isset($lang[1])) {
-            $this->_language = $this->isCountry($lang[1]);
-            //echo "국가설정=".$this->_language."를 설정합니다.<br>";         
-        }
-        return $this;
-    }
-
-    public function isCountry($code)
-    {
-        if($code == "kr") return $code;
-        else return NULL;
     }
 
     /**
      * uri 에서 컨트롤러 매소드를 분리합니다.
      * 분석한 URL은 _controller, _action, _param에 저장됩니다.
      */
-    protected function prepareURL()
+    public function parser()
     {
-        if (!empty($this->Application->_uri)) {
-            $url = $this->Application->_uri;
+        //echo __METHOD__."<br>";
+ 
+        if (!empty($this->_urlReals)) {
+            //echo "컨트롤러를 생성합니다..<br>";
 
             // 컨트롤러 선택합니다.
-            $this->controllerURL('\Jiny\Core\IndexController');
+            $this->setController('\Jiny\Core\IndexController');
 
             // 실행 매서드를 선택합니다.
-            $this->methodURL('index');
+            $this->setMethod('index');
 
             // 파라미터
             $this->parmURL();
 
         } else {
             // root 접속일 경우, URI가 비어있을 수 있습니다.
-            // echo "URI가 비어 있습니다.<br>";
-        }
+            //echo "URI가 비어 있습니다.<br>";
+        }     
 
         return $this;
     }
@@ -157,13 +87,15 @@ class Bootstrap
     /**
      * 컨트롤러와 매서드를 선택합니다.
      */
-    private function controllerURL($default=NULL)
+    private function setController($default=NULL)
     {
-        if (!empty($this->Application->_uri)) {
+        if (!empty($this->_urlReals)) {
             
-            if (isset($this->Application->_uri[0])) {
-                $this->Application->_controller = ucwords($this->Application->_uri[0])."Controller";
+            if (isset($this->_urlReals[0])) {
+                // 첫번째 인자는 컨트롤러
+                $this->Application->_controller = ucwords($this->_urlReals[0])."Controller";
             } else {
+                // 값이 없는 경우 기본으로 설정합니다.
                 $this->Application->_controller = $default;
             }
 
@@ -173,20 +105,21 @@ class Bootstrap
         return $this;
     }
 
+
     /**
      * 매서드를 선택합니다.
      */
-    private function methodURL($default=NULL)
+    private function setMethod($default=NULL)
     {
-        if (!empty($this->Application->_uri)) {
+        if (!empty($this->_urlReals)) {
             
-            if (isset($this->Application->_uri[1])) {
-                $this->Application->_action = $this->_uri[1];
+            if (isset($this->_urlReals[1])) {
+                $this->Application->_action = $this->_urlReals[1];
             } else {
                 $this->Application->_action = $default;
             }
 
-            //echo $this->Application->_action." 매소드를 선택합니다.<br>";
+            // echo $this->Application->_action." 매소드를 선택합니다.<br>";
         }
     
         return $this;
@@ -197,7 +130,7 @@ class Bootstrap
      */
     private function parmURL()
     {
-        $url = $this->Application->_uri;
+        $url = $this->_urlReals;
 
         // 추가 $url 배열값이 없는 경우 비어있는 [] 배열을 저장
         unset($url[0],$url[1]);

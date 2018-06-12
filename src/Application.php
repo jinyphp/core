@@ -1,8 +1,10 @@
 <?php
 namespace Jiny\Core;
 
+use \Jiny\Core\Registry\Registry;
 use \Jiny\Core\Boot\Bootstrap;
 use \Jiny\Core\Route\Route;
+use \Jiny\Core\Packages\Package;
 
 class Application
 {
@@ -17,32 +19,52 @@ class Application
 
     public $_routes = [];
 
+
+    /**
+     * 인스턴스
+     */
     public $Config;
     public $Registry;
     public $boot;
 
     public $Theme;
+    public $Packages;
+
+    public $_Country, $_Language;
 
     // 생성자 매직 매서드
-    public function __construct($Registry)
+    public function __construct()
     {   
-        // 레지스터를 등록
-        $this->Registry = $Registry;
-
-        // 환경설정 객체를 로드합니다.    
-        $this->Config = $this->Registry->get("CONFIG");        
-
-        // 부트스트래핑
-        $boot = new Bootstrap($this);   
+        // 설치된 페키지 목록을 저장합니다.
+        // 오류 방지를 위하여 설치 사전에 체크
+        $this->Packages = new Package ($this);
+        // print_r( $this->Packages->getPackages());
         
+        // 인스턴스 레지스터
+        // 클래스 인스턴스 pool 초기화
+        $this->registerInit();
+        
+        // 레지스터에 Application을 등록합니다.
+        $this->Registry->setInstance("App",$this);       
+        $this->Registry->setInstance("Packages", $this->Packages);
+        
+        // 환경설정 객체를 로드합니다. 
+        $this->configInit();
+        
+        
+        // 부트스트래핑
+        $this->boot = new Bootstrap($this);
+        $this->boot->parser();
+     
         // 라우트를 처리합니다.
         new Route($this);     
         
-        
         // 테마 클래스를 생성합니다.
         // Registry pool에 등록합니다
-        $this->Theme = $this->Registry->createInstance("\Jiny\Theme\Theme","Theme", $this);
-
+        if ($this->Packages->isPackage("jiny/theme")) {
+            $this->Registry->createInstance("\Jiny\Theme\Theme","Theme", $this);
+            $this->Theme = $this->Registry->get("Theme");
+        }
 
         if (!empty($this->_controller)) {
             // 컨트롤러 호출
@@ -51,23 +73,38 @@ class Application
         } else {
             // URI가 비어 있는 경우 동작.
             // echo "컨트롤러가 설정되어 있지 않습니다.<br>";
-            $this->pageController();       
+            $this->default();       
+        }
+    }
+
+    private function registerInit()
+    {
+        //echo __METHOD__."<br>";
+        $init = [];
+        if ($this->Packages->isPackage("jiny/config")) {
+            $init['CONFIG'] = \Jiny\Config\Config::class;
         }
 
+        if ($this->Packages->isPackage("jiny/frontmatter")) {
+            $init['FrontMatter'] = \Jiny\Frontmatter\FrontMatter::class;
+        } 
+
+        $this->Registry = Registry::init($init);
+        unset($init);
     }
 
-    /**
-     * root 접속시 초기페이지
-     */
-    public function index()
+    private function configInit()
     {
-        $this->_controller = new \Jiny\Core\IndexController;
-        $this->_action = "index";
-        call_user_func_array([$this->_controller, $this->_action], $this->_prams);
+        //echo __METHOD__."<br>";   
+        $this->Config = $this->Registry->get("CONFIG");
+        $this->Config->autoUpFiles()->parser();
+        
+        // \Jiny\Core\Registry::get("CONFIG")->setLoad("site.ini");
+        // \Jiny\Core\Registry::get("CONFIG")->setLoad("conf.php");
     }
 
     /**
-     * 컨트롤러를 체크, 호출합니다.
+     * 컨트롤러를 호출합니다.
      */
     public function controller()
     {
@@ -86,10 +123,13 @@ class Application
         } else {
             //echo "컨트롤러 파일이 존재하지 않습니다.<br>";
             // echo "기본 컨트롤러로 대체하여 실행이 됩니다.<br>";
-            $this->pageController();                             
+            $this->default();                             
         }
     }
 
+    /**
+     * 매서드를 호출합니다.
+     */
     public function method()
     {
         //echo $this->_action." 액션 매소드를 호출합니다.<br>";
@@ -105,12 +145,14 @@ class Application
         return $this;
     }
 
+
     /**
      * 기본 컨트롤러
      * pageController
      */
-    private function pageController()
+    private function default()
     {
+        // echo __METHOD__."<br>";
         $this->_controller = $this->instanceFactory("\Jiny\Pages\Page");
         $this->_body = $this->_controller->index();  
     }
@@ -119,5 +161,17 @@ class Application
     {
         return new $name($this);
     }
+
+    /**
+     * root 접속시 초기페이지
+     */
+    /*
+    public function index()
+    {
+        $this->_controller = new \Jiny\Core\IndexController;
+        $this->_action = "index";
+        call_user_func_array([$this->_controller, $this->_action], $this->_prams);
+    }
+    */
     
 }
