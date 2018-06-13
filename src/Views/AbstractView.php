@@ -20,12 +20,12 @@ abstract class AbstractView
 
     public function mergeViewData($arr)
     {
-        echo __METHOD__."를 호출합니다.<br>";
+        //echo __METHOD__."를 호출합니다.<br>";
         if (\is_array($this->view_data)){
-            echo "배열을 병합합니다.<br>";
-            print_r($arr);
+            //echo "배열을 병합합니다.<br>";
+            //print_r($arr);
             array_merge($this->view_data, $arr);
-            echo "<br><br>";
+            //echo "<br><br>";
         } else {
             $this->view_data = $data; 
         }        

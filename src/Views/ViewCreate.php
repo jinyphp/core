@@ -34,7 +34,7 @@ trait ViewCreate
         $body = $this->loadViewFile();
 
         // 머리말을 체크합니다.
-        // 문서에서 머리말을 분리합니다.
+        // 문서에서 머리말을 분리합니다.     
         $this->frontMatter($body);
 
         // 문서를 변환합니다.
@@ -79,6 +79,8 @@ trait ViewCreate
 
             case 'docx':
                 // 워드 문서를 변환합니다.
+                
+
                 break;    
         }
 
@@ -90,11 +92,13 @@ trait ViewCreate
      */
     public function layoutRender()
     {
-        // echo __METHOD__."<br>";
-        if($this->_data['layout']){
-            $layout = $this->Theme->loadFile( $this->_data['layout'] );
+        //echo __METHOD__."<br>";
+
+        if($this->view_data['Page']['layout']){
+            //echo "레이아웃 파일을 읽어 옵니다.";
+            $layout = $this->Theme->loadFile( $this->view_data['Page']['layout'] );
             if ($layout) {
-                // echo "레이아웃을 적용합니다.<br>";
+                //echo "레이아웃을 적용합니다.<br>";
                 $this->_body = str_replace("{{ content }}", $this->_body, $layout);
             }
         }

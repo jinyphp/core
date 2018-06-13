@@ -42,6 +42,10 @@ trait ViewShow
         // 랜더링을 처리합니다.
         $body = $this->pageRender($body);
 
+        // ROOT 경로변경
+        // echo "ROOT_PUBLIC=". ROOT_PUBLIC."<br>";
+        $body = str_replace("/assets", ROOT_PUBLIC."/assets", $body);
+
         echo $body;          
              
     }

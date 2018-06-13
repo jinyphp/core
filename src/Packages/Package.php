@@ -20,7 +20,7 @@ class Package
     private function set()
     {
         //echo __METHOD__."<br>";
-        $filename = "../composer.json";
+        $filename = ROOT.DS."composer.json";
         $Packages = file_get_contents($filename);
         $this->_packages = \json_decode($Packages);
 
@@ -43,7 +43,6 @@ class Package
     {
         return $this->_packages->require;
     }
-
 
     public function isPackage($name=NULL)
     {

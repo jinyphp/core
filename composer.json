@@ -17,7 +17,8 @@
     ],
     "minimum-stability": "stable",
     "require": {
-        "php": ">= 7.0"
+        "php": ">= 7.0",
+        "jiny/config": "^0.0.2"
     },
     "autoload": {
         "psr-4": {

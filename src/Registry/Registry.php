@@ -31,6 +31,7 @@ class Registry
      */
     public static function init($list=NULL)
     {
+        // echo "레지스트리를 초기화 합니다.<br>";
         self::$_instances = [];
 
         // 필수 인스턴스를 생성하여 저장을 합니다.
@@ -81,6 +82,7 @@ class Registry
      */
     public function get($key, $default=NULL)
     {
+        //echo __METHOD__."<br>";
         if (isset(self::$_instances[$key])) {            
             return self::$_instances[$key];
         } else {

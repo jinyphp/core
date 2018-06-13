@@ -2,9 +2,10 @@
 namespace Jiny\Core;
 
 use \Jiny\Core\Registry\Registry;
+use \Jiny\Core\Packages\Package;
 use \Jiny\Core\Boot\Bootstrap;
 use \Jiny\Core\Route\Route;
-use \Jiny\Core\Packages\Package;
+
 
 class Application
 {
@@ -95,12 +96,21 @@ class Application
 
     private function configInit()
     {
-        //echo __METHOD__."<br>";   
+        //echo __METHOD__."<br>";
+        //echo "설정파일을 초기화 합니다.<br>";
+        //echo "<hr>";
         $this->Config = $this->Registry->get("CONFIG");
-        $this->Config->autoUpFiles()->parser();
+        // echo "<pre>";
+        // print_r($this->Config);
+        // echo "</pre>";
+
+        //echo "파일을 자동로드 <br>";
+        $this->Config->autoUpFiles();
+        $this->Config->parser();
         
         // \Jiny\Core\Registry::get("CONFIG")->setLoad("site.ini");
         // \Jiny\Core\Registry::get("CONFIG")->setLoad("conf.php");
+        //echo "<hr>";
     }
 
     /**

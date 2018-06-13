@@ -24,7 +24,7 @@ trait URI
             $arr = [];
             unset($urls[0]);
             foreach ($urls as $value) {
-                echo $value."<br>";
+                //echo $value."<br>";
                 array_push($arr, $value);
             }
             return $arr;
