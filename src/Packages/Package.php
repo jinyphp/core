@@ -5,6 +5,7 @@ class Package
 {
     private $Application;
     private $_packages;
+
     public function __construct($app)
     {
         // 
@@ -49,7 +50,8 @@ class Package
     {
         // \TimeLog::set(__METHOD__);
         if ($name) {
-            return $this->_packages->require->$name;
+            if(isset($this->_packages->require->$name))
+                return $this->_packages->require->$name;
         }
 
         return NULL;
