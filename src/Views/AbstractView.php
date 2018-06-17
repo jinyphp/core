@@ -10,16 +10,22 @@ abstract class AbstractView
 
     public function setViewFile($file)
     {
+        // \TimeLog::set(__METHOD__);
+
         $this->view_file = $file;
     }
 
     public function setViewData($data)
     {
+        // \TimeLog::set(__METHOD__);
+
         $this->view_data = $data;
     }
 
     public function mergeViewData($arr)
     {
+        // \TimeLog::set(__METHOD__);
+
         //echo __METHOD__."를 호출합니다.<br>";
         if (\is_array($this->view_data)){
             //echo "배열을 병합합니다.<br>";
@@ -33,6 +39,8 @@ abstract class AbstractView
 
     public function getViewData()
     {
+        // \TimeLog::set(__METHOD__);
+
         return $this->view_data;
     }
 
@@ -46,6 +54,8 @@ abstract class AbstractView
      */
     protected function instanceInit()
     {
+        // \TimeLog::set(__METHOD__);
+
         // 객체참조 개선을 위해서 임시저장합니다.        
         $this->conf = Registry::get("CONFIG");
         $this->Config = $this->conf;

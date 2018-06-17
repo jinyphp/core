@@ -15,7 +15,7 @@ trait ViewShow
      */
     public function show()
     {
-        //echo __METHOD__."를 호출합니다.<br>";
+        // \TimeLog::set(__METHOD__);
         // 해더를 생성합니다.
         $this->Theme->header();
         $this->_header = $this->Theme->headerRender($this->view_data);
@@ -51,12 +51,55 @@ trait ViewShow
     }
 
 
+    public function pageRender($body)
+    {
+        //\TimeLog::set(__METHOD__);
+
+        $codes = $this->Theme->setPrefix(self::PREFIX_START, self::PREFIX_END)
+                        ->preFixs($body);
+
+        foreach ($codes as $value) {
+            //echo "<pre>";
+            //print_r($data = $this->conf->data());
+            //echo "</pre>";
+            switch ($value[0]) {
+                case '#':                    
+                    // 환경변수의 값을 출력합니다.
+                    $key = substr($value, 1);
+                    // echo $key."<br>";
+                    if ($data = $this->conf->data($key)) {
+                        //print_r($data);
+                        $body = str_replace(
+                            self::PREFIX_START." ".$value." ".self::PREFIX_END, 
+                            $data, 
+                            $body);
+                    } else {
+                        $body = str_replace(
+                            self::PREFIX_START." ".$value." ".self::PREFIX_END, 
+                            "", 
+                            $body);
+                    }
+
+                    
+                    break;
+                case '$':     
+            }
+
+        }
+    
+
+        return $body;
+    }
+    
+    
+    
     /**
      * 페이지 레이아웃이 설정되어 있는 경우
      * 레이아웃으로 래핑합니다.
      */
     public function Layout($layout=NULL)
     {
+        // \TimeLog::set(__METHOD__);
         if (isset($layout)) {
             // 레이아웃 파일을 읽어옵니다.
             $layoutBody = $this->Theme->layout();
@@ -85,10 +128,11 @@ trait ViewShow
         }
         return $layoutBody;
     }
+    
 
     public function getAction()
     {
-        // echo __METHOD__."를 호출합니다.<br>";
+        // \TimeLog::set(__METHOD__);
         // 반환되는 값은 배열타입 입니다.
         // 배열의 1을 반환합니다.
         // echo "view_file = ". $this->view_file. "<br>";

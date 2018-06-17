@@ -14,11 +14,13 @@ class Controller
 
     public function getApp()
     {
+        // \TimeLog::set(__METHOD__);
         return $this->Application;
     }
 
     public function setApp($app)
     {
+        // \TimeLog::set(__METHOD__);
         if (isset($app)) {
             $this->Application = $app;
         }
@@ -29,6 +31,7 @@ class Controller
      */
     public function view($viewName, $data=[])
     {
+        // \TimeLog::set(__METHOD__);
         //echo "View 객체를 생성합니다.<br>";
         $this->_view = new \Jiny\Core\Views\View($viewName, $data);
         return $this->_view;
@@ -36,6 +39,7 @@ class Controller
 
     public function viewFactory($userController)
     {
+        // \TimeLog::set(__METHOD__);
         //echo "View 객체를 생성합니다.<br>";
         $this->View = new \Jiny\Core\Views\View($userController);
         return $this->View;
@@ -43,6 +47,7 @@ class Controller
 
     public function viewPath()
     {
+        // \TimeLog::set(__METHOD__);
         $this->viewFile = $this->getPath();
 
         return $this->viewFile;
@@ -53,8 +58,10 @@ class Controller
      */
     public function getPath()
     {
+        // \TimeLog::set(__METHOD__);
         $url = $this->Application->boot->URL();
         if ($url) {
+            $path = "";
             foreach ($url as $value) {
                 $path .= $value. DS;
             }
@@ -73,6 +80,7 @@ class Controller
      */
     public function model($modelName, $data=[])
     {
+        // \TimeLog::set(__METHOD__);
         if (file_exists(MODELS. $modelName. '.php')) {
             // require MODEL. $modelName. '.php';
             // 오토로드를 통하여 파일 자동로드

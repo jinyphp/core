@@ -28,7 +28,7 @@ trait ViewCreate
      */
     public function create($data=[])
     {
-        // echo __METHOD__."를 호출합니다.<br>";
+        \TimeLog::set(__METHOD__);
 
         // 뷰파일을 읽어 옵니다.
         $body = $this->loadViewFile();
@@ -54,6 +54,8 @@ trait ViewCreate
         // 페이지 레이아웃 처리
         $this->layoutRender();
 
+        // $this->_body = pageRender($this->_body);
+
         return $this;
     }
     
@@ -63,7 +65,7 @@ trait ViewCreate
      */
     public function convert($type)
     {
-        // echo __METHOD__."를 호출합니다.<br>";
+        \TimeLog::set(__METHOD__);
 
         // 페이지를 처리합니다.
         switch ($type) {
@@ -92,9 +94,8 @@ trait ViewCreate
      */
     public function layoutRender()
     {
-        //echo __METHOD__."<br>";
-
-        if($this->view_data['Page']['layout']){
+        \TimeLog::set(__METHOD__);
+        if (isset($this->view_data['Page']['layout'])) {
             //echo "레이아웃 파일을 읽어 옵니다.";
             $layout = $this->Theme->loadFile( $this->view_data['Page']['layout'] );
             if ($layout) {
@@ -103,50 +104,5 @@ trait ViewCreate
             }
         }
     }
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        public function pageRender($body)
-        {
-            $prefixdCode = $this->Theme->setPrefix(self::PREFIX_START, self::PREFIX_END)->preFixs($body);
-            foreach ($prefixdCode as $value) {
-    
-                switch ($value[0]) {
-                    case '#':
-                      
-                        // 환경변수의 값을 출력합니다.
-                        $data = $this->conf->data( substr($value, 1) );
-                        $body = str_replace(
-                            self::PREFIX_START." ".$value." ".self::PREFIX_END, 
-                            $data, 
-                            $body);
-                           
-                        break;
-                }
-    
-            }
-        
-    
-            return $body;
-        }
-    
-    
-    
 
 }

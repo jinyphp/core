@@ -6,7 +6,7 @@ class Route extends RouteAbstract
 {
     public function __construct($app)
     {
-        // echo __CLASS__." 객체를 생성하였습니다.";
+        // \TimeLog::set(__CLASS__."가 생성이 되었습니다.");
         $this->Application = $app;
 
         
@@ -14,7 +14,7 @@ class Route extends RouteAbstract
 
     public function route()
     {
-
+        // \TimeLog::set(__METHOD__);
     }
 
     /*

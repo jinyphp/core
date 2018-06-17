@@ -36,11 +36,12 @@ class Application
     // 생성자 매직 매서드
     public function __construct()
     {   
+        \TimeLog::set(__CLASS__."가 생성이 되었습니다.");
+
         // 설치된 페키지 목록을 저장합니다.
         // 오류 방지를 위하여 설치 사전에 체크
         $this->Packages = new Package ($this);
-        // print_r( $this->Packages->getPackages());
-        
+          
         // 인스턴스 레지스터
         // 클래스 인스턴스 pool 초기화
         $this->registerInit();
@@ -50,8 +51,7 @@ class Application
         $this->Registry->setInstance("Packages", $this->Packages);
         
         // 환경설정 객체를 로드합니다. 
-        $this->configInit();
-        
+        $this->configInit();        
         
         // 부트스트래핑
         $this->boot = new Bootstrap($this);
@@ -80,7 +80,8 @@ class Application
 
     private function registerInit()
     {
-        //echo __METHOD__."<br>";
+        \TimeLog::set(__METHOD__);
+        
         $init = [];
         if ($this->Packages->isPackage("jiny/config")) {
             $init['CONFIG'] = \Jiny\Config\Config::class;
@@ -96,15 +97,9 @@ class Application
 
     private function configInit()
     {
-        //echo __METHOD__."<br>";
-        //echo "설정파일을 초기화 합니다.<br>";
-        //echo "<hr>";
+        // \TimeLog::set(__METHOD__);
         $this->Config = $this->Registry->get("CONFIG");
-        // echo "<pre>";
-        // print_r($this->Config);
-        // echo "</pre>";
 
-        //echo "파일을 자동로드 <br>";
         $this->Config->autoUpFiles();
         $this->Config->parser();
         
@@ -118,6 +113,7 @@ class Application
      */
     public function controller()
     {
+        // \TimeLog::set(__METHOD__);
         // 컨트롤러 클래스 파일이 존재여부를 확인후에 처리함
         // CONTROLLERS
         $filename = "../App/Controllers/".$this->_controller. ".php";
@@ -142,7 +138,7 @@ class Application
      */
     public function method()
     {
-        //echo $this->_action." 액션 매소드를 호출합니다.<br>";
+        // \TimeLog::set(__METHOD__);
         if (method_exists($this->_controller, $this->_action)) {
             //echo "메서드 호출";
 
@@ -162,26 +158,17 @@ class Application
      */
     private function default()
     {
-        // echo __METHOD__."<br>";
+        // \TimeLog::set(__METHOD__);
         $this->_controller = $this->instanceFactory("\Jiny\Pages\Page");
         $this->_body = $this->_controller->index();  
     }
 
     public function instanceFactory($name)
     {
+        // \TimeLog::set(__METHOD__);
         return new $name($this);
     }
 
-    /**
-     * root 접속시 초기페이지
-     */
-    /*
-    public function index()
-    {
-        $this->_controller = new \Jiny\Core\IndexController;
-        $this->_action = "index";
-        call_user_func_array([$this->_controller, $this->_action], $this->_prams);
-    }
-    */
+
     
 }

@@ -12,12 +12,13 @@ trait URI
 
     public function URL()
     {
+        // \TimeLog::set(__METHOD__);
         return $this->_urlReals;
     }
 
     private function uriREAL($urls)
     {   
-        //echo __METHOD__."<br>";     
+        // \TimeLog::set(__METHOD__);    
         // 로케일을 제외한 url를 반환
         if ( $this->isLocale($urls) ) {
             //echo "로케일을 설정합니다.<br>";
@@ -40,7 +41,7 @@ trait URI
      */
     private function isLocale($url)
     {
-        //echo __METHOD__."<br>";
+        // \TimeLog::set(__METHOD__);
 
         if (isset($url[0])) {
 
@@ -84,7 +85,7 @@ trait URI
      */
     private function explodeURI($request)
     {
-        //echo __METHOD__."<br>";
+        // \TimeLog::set(__METHOD__);
 
         // URL의 마지막 '/'를 제거합니다.
         // 마지막 공백의 배열생성을 방지합니다.
@@ -107,7 +108,7 @@ trait URI
      */
     private function getURL($request, $base=NULL)
     {
-        //echo __METHOD__."<br>";
+        // \TimeLog::set(__METHOD__);
 
         if ($base) {
             return str_replace($base, "", $request);
@@ -121,7 +122,7 @@ trait URI
      */
     private function getREQUEST()
     {
-        // echo __METHOD__."<br>";
+        // \TimeLog::set(__METHOD__);
         return explode('?', $_SERVER['REQUEST_URI'])[0];
     }
 

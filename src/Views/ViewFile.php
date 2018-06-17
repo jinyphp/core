@@ -9,15 +9,28 @@ trait ViewFile
     protected $_pageType;
     protected $DOCX;
 
+    protected $_tempFile;
+
     /**
      * 뷰(view) 파일을 읽어옵니다.
      */
     public function loadViewFile()
     {
-        //echo __METHOD__."<br>";
+        // \TimeLog::set(__METHOD__);
+
         // 설정한 경로에서 파일을 읽어 옵니다.
-        $path = ROOT.$this->conf->data('ENV.path.view');
-        return $this->viewFile( $path. DS. $this->view_file );
+        $path = str_replace("/", DS, $this->conf->data('ENV.path.view'));
+        $path = ROOT.$path;
+        if ($this->view_file == "/") {
+            $filepath = $path. DS;
+        } else {
+            $filepath = $path. DS. $this->view_file;
+        }
+
+        $body = $this->viewFile( $filepath );
+        
+        
+        return $body;
 
     }
 
@@ -27,35 +40,76 @@ trait ViewFile
      */
     public function viewFile($path)
     {
-        //echo __METHOD__."<br>";
+        // \TimeLog::set(__METHOD__);
         $indexs = $this->Config->data("ENV.Resource.Indexs");
-        //print_r($indexs);
-        //echo $path."<br>";
-
         foreach ($indexs as $name) {
             if (file_exists($path.$name)) {
                 $arr = \explode(".",$name);
-                $this->_pageType = isset($arr[1])? $arr[1]: NULL;
-                //echo "문서 포맷 =".$this->_pageType."<br>";
-                if ($this->_pageType == "docx") {
-                    $this->DOCX = new \Docx_reader\Docx_reader();
-                    //echo "doc file = ".$path.$name."<br>";
-                    $this->DOCX->setFile($path.$name);
 
-                    if(!$this->DOCX->get_errors()) {
-                        $html = $this->DOCX->to_html();
-                        $plain_text = $this->DOCX->to_plain_text();
-    
-                        return $html;
+                $this->_pageType = isset($arr[1])? $arr[1]: NULL;
+
+                if ($this->isFileUpdate($path.$name)) {
+                    //echo "원본처리<br>";
+                    if ($this->_pageType == "docx") {
+                        $body = $this->getDocx($path.$name);
                     } else {
-                        // echo implode(', ',$doc->get_errors());
+                        $body = $this->getFile($path.$name);
                     }
 
+                    $this->tempFile($path.$name, $body);
+                    return $body;
+
                 } else {
-                    return file_get_contents($path.$name);
+                    //echo "캐쉬로 대체합니다.<br>";
+                    return $this->getFile($path.$name.".tmp");
                 }
                 
             }
         }
     }
+
+    public function isFileUpdate($name)
+    {
+        $origin = filemtime($name);
+        if (file_exists($name.".tmp")) {
+            $temp = filemtime($name.".tmp");
+            //echo "케쉬=".$temp."<br>";
+
+            if( $temp > $origin ) return FALSE; else return TRUE;
+
+        } else {
+            return TRUE;
+        }
+    }
+
+    public function getDocx($name)
+    {
+        $this->DOCX = new \Docx_reader\Docx_reader();
+        //echo "doc file = ".$path.$name."<br>";
+        $this->DOCX->setFile($name);
+
+        if(!$this->DOCX->get_errors()) {
+            $html = $this->DOCX->to_html();
+            $plain_text = $this->DOCX->to_plain_text();
+
+            return $html;
+        } else {
+            // echo implode(', ',$doc->get_errors());
+        }
+    }
+
+    public function getFile($name)
+    {
+        //echo $name."<br>";
+        return file_get_contents($name);
+    }
+
+    public function tempFile($name, $body)
+    {
+        file_put_contents($name.".tmp", $body);
+    }
+
+
+
+
 }

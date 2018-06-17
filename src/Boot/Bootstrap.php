@@ -23,7 +23,7 @@ class Bootstrap
 
     public function __construct($app)
     {
-        // echo __CLASS__."객체를 생성합니다.<br>";
+        // \TimeLog::set(__CLASS__."가 생성이 되었습니다.");
         $this->Application = $app;
 
         // 시작 url 위치를 지정합니다.
@@ -62,7 +62,7 @@ class Bootstrap
      */
     public function parser()
     {
-        //echo __METHOD__."<br>";
+        // \TimeLog::set(__METHOD__);
  
         if (!empty($this->_urlReals)) {
             //echo "컨트롤러를 생성합니다..<br>";
@@ -89,6 +89,7 @@ class Bootstrap
      */
     private function setController($default=NULL)
     {
+        // \TimeLog::set(__METHOD__);
         if (!empty($this->_urlReals)) {
             
             if (isset($this->_urlReals[0])) {
@@ -111,6 +112,7 @@ class Bootstrap
      */
     private function setMethod($default=NULL)
     {
+        // \TimeLog::set(__METHOD__);
         if (!empty($this->_urlReals)) {
             
             if (isset($this->_urlReals[1])) {
@@ -130,6 +132,7 @@ class Bootstrap
      */
     private function parmURL()
     {
+        // \TimeLog::set(__METHOD__);
         $url = $this->_urlReals;
 
         // 추가 $url 배열값이 없는 경우 비어있는 [] 배열을 저장

@@ -19,7 +19,7 @@ class Package
      */
     private function set()
     {
-        //echo __METHOD__."<br>";
+        // \TimeLog::set(__METHOD__);
         $filename = ROOT.DS."composer.json";
         $Packages = file_get_contents($filename);
         $this->_packages = \json_decode($Packages);
@@ -32,7 +32,7 @@ class Package
      */
     public function get()
     {
-        //echo __METHOD__."<br>";
+        // \TimeLog::set(__METHOD__);
         return $this->_packages;
     }
 
@@ -41,11 +41,13 @@ class Package
      */
     public function getPackages()
     {
+        // \TimeLog::set(__METHOD__);
         return $this->_packages->require;
     }
 
     public function isPackage($name=NULL)
     {
+        // \TimeLog::set(__METHOD__);
         if ($name) {
             return $this->_packages->require->$name;
         }

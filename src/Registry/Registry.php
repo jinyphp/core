@@ -31,6 +31,7 @@ class Registry
      */
     public static function init($list=NULL)
     {
+        // \TimeLog::set(__METHOD__);
         // echo "레지스트리를 초기화 합니다.<br>";
         self::$_instances = [];
 
@@ -48,7 +49,7 @@ class Registry
      */
     public function createInstance($name, $key=NULL, $instance=NULL)
     {
-        // echo __METHOD__."<br>";
+        // \TimeLog::set(__METHOD__);
         // echo $name."=".$key."<br>";
 
         // 싱글톤 생성호출 메소드 존재 여부를 확인합니다.
@@ -82,7 +83,7 @@ class Registry
      */
     public function get($key, $default=NULL)
     {
-        //echo __METHOD__."<br>";
+        // \TimeLog::set(__METHOD__);
         if (isset(self::$_instances[$key])) {            
             return self::$_instances[$key];
         } else {
@@ -96,12 +97,15 @@ class Registry
      * 인스턴스를 저장합니다.
      */
     public function set($key, $instance){
+        // \TimeLog::set(__METHOD__);
         self::$_instances[$key] = $instance;
     }
 
     public function setInstance($key, $instance)
     {
-        $this->_instances[$key] = $instance;
+        // \TimeLog::set(__METHOD__);
+        // $this->_instances[$key] = $instance;
+        self::$_instances[$key] = $instance;
     }
 
     /**
@@ -109,6 +113,7 @@ class Registry
      */
     public function erase()
     {
+        // \TimeLog::set(__METHOD__);
         unset(self::$_instances[$key]);
     }
 
@@ -118,6 +123,7 @@ class Registry
      */
     public function lists()
     {
+        // \TimeLog::set(__METHOD__);
         $arr = [];
         foreach ($this->_instances as $key => $value) {
             array_push($arr,$key);
@@ -130,6 +136,7 @@ class Registry
      */
     public function instances()
     {
+        // \TimeLog::set(__METHOD__);
         return $this->_instances;
     }
 
