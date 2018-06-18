@@ -36,6 +36,13 @@ class View extends AbstractView
         // 메뉴 데이터를 읽어옵니다.
         $this->view_data['menus'] = $this->Controller->Menu->getTree();
 
+        // 설정파일을 뷰데이터에 결합합니다.
+        $cfgData = $this->Controller->getApp()->Config->data();
+        foreach ($cfgData as $key => $value) {
+            $this->view_data[$key] = $value;
+        }
+        // print_r($this->view_data);
+
     }
 
 }
