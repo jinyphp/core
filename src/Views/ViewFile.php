@@ -28,7 +28,7 @@ trait ViewFile
         $path = $this->filePath();
 
         if ($filename = $this->fileCheck($path)) {
-            //echo "파일을 처리합니다. $filename";
+            // echo "파일을 처리합니다. $filename";
             return $this->getFile($filename);
           
         } else {
@@ -59,7 +59,7 @@ trait ViewFile
 
             foreach ($dd as $value) {
                 $filepath .= $value;
-                //echo $filepath;
+                // $filepath;
                 if(is_dir($filepath)){
                     //echo " = 디렉토리<br>";
                     // 디렉토리인 경우 다음 경로를 찾습니다.
@@ -67,15 +67,19 @@ trait ViewFile
                     continue;
                 } else {
                     //echo "== 파일<br>";
-                    if ($name = $this->isExt($filepath, $exts)) {
-                        // 디렉토리명과 일치한 파일이 있는 경우
-                        // 해당 파일로 정의합니다.
-                        return $name;
-                    }
+                    $filepath .= "_";
                 }
-
-                $filepath .= ".";
             }
+
+            $filepath = \rtrim($filepath,"_");
+            //echo $filepath."<br>";
+            if ($name = $this->isExt($filepath, $exts)) {
+                // 디렉토리명과 일치한 파일이 있는 경우
+                // 해당 파일로 정의합니다.
+                return $name;
+            }
+
+            return $name;
 
         }
     
@@ -98,8 +102,10 @@ trait ViewFile
     public function isExt($filepath, $exts)
     {
         foreach ($exts as $ext) {
+            //echo $ext."<br>";
             if (file_exists($filepath.".".$ext)) {
-                $this->_pageType = $ext;            
+                $this->_pageType = $ext;
+                //echo   $filepath.".".$ext . "<br>";     
                 return $filepath.".".$ext;
             } 
         }

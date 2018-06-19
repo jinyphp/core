@@ -19,7 +19,7 @@ trait FrontMatter
         $document = Registry::get("FrontMatter")->parse($doc);
 
         $path = ROOT.$this->conf->data('ENV.path.view');
-        $dataYMAL = $path. DS. $this->view_file."index.yaml";
+        $dataYMAL = $path. DS. $this->view_file."index.yml";
         if (file_exists($dataYMAL)){
             //echo "ymal 데이터가 존재합니다.<br>";
             $str = file_get_contents($dataYMAL);

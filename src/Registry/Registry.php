@@ -47,7 +47,7 @@ class Registry
     /**
      * 인스턴스를 생성 등록합니다.
      */
-    public function createInstance($name, $key=NULL, $instance=NULL)
+    public static function createInstance($name, $key=NULL, $instance=NULL)
     {
         // \TimeLog::set(__METHOD__);
         // echo $name."=".$key."<br>";
@@ -81,7 +81,7 @@ class Registry
     /**
      * 저장된 인스턴스를 반환합니다.
      */
-    public function get($key, $default=NULL)
+    public static function get($key, $default=NULL)
     {
         // \TimeLog::set(__METHOD__);
         if (isset(self::$_instances[$key])) {            

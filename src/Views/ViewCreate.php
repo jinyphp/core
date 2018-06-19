@@ -41,13 +41,14 @@ trait ViewCreate
         // 문서 타입
         $this->convert($this->_pageType);
 
-        // 지니 
+        // 지니 랜더링
         if ( $this->conf->data("ENV.Tamplate.PreProcess") ) {
             // $this->_body = pageRender($this->_body);
         }
 
         // 템플릿을 처리합니다
-        if ( $this->conf->data("ENV.Tamplate.Engine") ) {            
+        if ( $engine = $this->conf->data("ENV.Tamplate.Engine") ) {
+            // 템플릿 인스턴스를 생성합니다.       
             $this->Template = new \Jiny\Template\Template($this);
         }
         
@@ -67,8 +68,6 @@ trait ViewCreate
     public function convert($type)
     {
         // \TimeLog::set(__METHOD__);
-
-        // 페이지를 처리합니다.
         switch ($type) {
             case 'htm':
                 //echo "html 파일을 출력합니다.<br>";             
@@ -81,15 +80,15 @@ trait ViewCreate
                 break;
 
             case 'docx':
-                // 워드 문서를 변환합니다.
-                
-
+                // 워드 문서는 파일을 읽을때 자동 변경됩니다.
                 break;    
         }
 
         return $this;
     }
 
+
+    
     /**
      * 머리말 레이아웃
      */
