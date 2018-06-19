@@ -40,7 +40,6 @@ class Controller
     public function viewFactory($userController)
     {
         // \TimeLog::set(__METHOD__);
-        //echo "View 객체를 생성합니다.<br>";
         $this->View = new \Jiny\Core\Views\View($userController);
         return $this->View;
     }
@@ -61,14 +60,14 @@ class Controller
         // \TimeLog::set(__METHOD__);
         $url = $this->Application->boot->URL();
         if ($url) {
-            $path = "";
+            $path = DS;
             foreach ($url as $value) {
                 $path .= $value. DS;
             }
             return $path;
         } else {
             // Root 접속
-            return "/";
+            return DS;
         }
         
     }

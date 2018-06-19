@@ -61,11 +61,12 @@ trait ViewCreate
     
 
     /**
-     * 문서가 markdown, word 파일일때 변환처리르 합니다.
+     * 문서를 변환합니다.
+     * markdown, word 파일일때 변환처리르 합니다.
      */
     public function convert($type)
     {
-        \TimeLog::set(__METHOD__);
+        // \TimeLog::set(__METHOD__);
 
         // 페이지를 처리합니다.
         switch ($type) {
@@ -94,7 +95,7 @@ trait ViewCreate
      */
     public function layoutRender()
     {
-        \TimeLog::set(__METHOD__);
+        // \TimeLog::set(__METHOD__);
         if (isset($this->view_data['Page']['layout'])) {
             //echo "레이아웃 파일을 읽어 옵니다.";
             $layout = $this->Theme->loadFile( $this->view_data['Page']['layout'] );
