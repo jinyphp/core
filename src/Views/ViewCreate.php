@@ -7,7 +7,6 @@ use \Jiny\Core\Registry\Registry;
 /**
  * 뷰의 페이지를 처리합니다.
  */
-
 trait ViewCreate
 {
     public $Template;
@@ -41,21 +40,21 @@ trait ViewCreate
         // 문서 타입
         $this->convert($this->_pageType);
 
+        
+
         // 지니 랜더링
         if ( $this->conf->data("ENV.Tamplate.PreProcess") ) {
             // $this->_body = pageRender($this->_body);
         }
+
+        // 페이지 레이아웃 처리
+        $this->layoutRender();
 
         // 템플릿을 처리합니다
         if ( $engine = $this->conf->data("ENV.Tamplate.Engine") ) {
             // 템플릿 인스턴스를 생성합니다.       
             $this->Template = new \Jiny\Template\Template($this);
         }
-        
-        // 페이지 레이아웃 처리
-        $this->layoutRender();
-
-        // $this->_body = pageRender($this->_body);
 
         return $this;
     }
