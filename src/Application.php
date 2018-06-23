@@ -116,7 +116,7 @@ class Application
         // \TimeLog::set(__METHOD__);
         // 컨트롤러 클래스 파일이 존재여부를 확인후에 처리함
         // CONTROLLERS
-        $filename = "../App/Controllers/".$this->_controller. ".php";
+        $filename = ROOT."/App/Controllers/".$this->_controller. ".php";
         //echo "컨트롤러 = ".$filename. "를 로드합니다.<br>";
         if (file_exists($filename)) {
             
