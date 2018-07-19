@@ -1,0 +1,87 @@
+<?php
+
+namespace Jiny\Core;
+
+use \Jiny\Core\Registry\Registry;
+use \Jiny\Core\Packages\Package;
+use \Jiny\Core\Http\Bootstrap;
+use \Jiny\Core\Route\Router;
+
+trait AppRun
+{
+    /**
+     * 실행합니다.
+     * 컨트롤러, 매소드를 호출합니다.
+     */
+    public function run()
+    {
+      
+        // 컨트롤러 호출
+        // 컨트롤러가 없는 경우 기본 컨트롤러 동작      
+        if (!empty($this->_controller)) {
+            return $this->controller();
+        } else {
+            return $this->default();       
+        }
+      
+    }
+
+    /**
+     * 컨트롤러를 호출합니다.
+     */
+    public function controller()
+    {
+        
+        \TimeLog::set(__METHOD__);
+        // 컨트롤러 클래스 파일이 존재여부를 확인후에 처리함
+        $controllerPath = DS."App".DS."Controllers".DS;
+        $extention = ".php";
+        $filename = ROOT.$controllerPath.$this->_controller.$extention;
+        if (file_exists($filename)) {           
+            // 인스턴스 생성, 재저장 합니다.
+            $name = "\App\Controllers\\".$this->_controller;
+            $this->_controller = new $name ($this);
+            Registry::set("controller", $this->_controller);
+            // 메서드 실행 반환
+            return $this->method();
+
+        } else {
+            return $this->default();                             
+        }
+    }
+
+    /**
+     * 매서드를 호출합니다.
+     * 콜백함수을 이용하여 호출.
+     */
+    public function method()
+    {
+        \TimeLog::set(__METHOD__);
+        if (method_exists($this->_controller, $this->_action)) {
+       
+            return call_user_func_array([$this->_controller, $this->_action], $this->_prams);
+            
+        } else {
+           echo "컨트롤러에 메서드가 존재하지 않습니다. ";
+           echo "stopping";
+           exit;
+        } 
+    }
+
+    /**
+     * 기본 컨트롤러
+     * pageController
+     */
+    private function default()
+    {
+        // \TimeLog::set(__METHOD__);
+        $this->_controller = new \Jiny\Pages\PageController($this);
+        
+        Registry::set("controller", $this->_controller);
+        return $this->_controller->index();  
+    }
+
+    /**
+     * 
+     */
+}

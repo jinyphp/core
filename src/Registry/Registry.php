@@ -47,20 +47,28 @@ class Registry
     /**
      * 인스턴스를 생성 등록합니다.
      */
+    public static function create($name, $key=NULL, $instance=NULL)
+    {
+        return self::createInstance($name, $key, $instance);
+    }
+
+    /**
+     * 
+     */
     public static function createInstance($name, $key=NULL, $instance=NULL)
     {
         // \TimeLog::set(__METHOD__);
-        // echo $name."=".$key."<br>";
-
-        // 싱글톤 생성호출 메소드 존재 여부를 확인합니다.
+        // 싱글톤 메서드 확인
         if (method_exists($name, "instance")) {
-            // 싱글톤 메서드 호출
+            // 싱글톤 메서드를 통하여 인스턴스를 생성합니다.
             $obj = $name::instance(); 
         } else {
-            // 인스턴스 생성
+            // 일반 인스턴스 생성
             if($instance){
+                //의존성이 있는 경우
                 $obj = new $name ($instance);
             } else {
+                // 의존성이 없는 경우
                 $obj = new $name;
             }
             
@@ -96,7 +104,7 @@ class Registry
     /**
      * 인스턴스를 저장합니다.
      */
-    public function set($key, $instance){
+    public static function set($key, $instance){
         // \TimeLog::set(__METHOD__);
         self::$_instances[$key] = $instance;
     }
@@ -125,7 +133,7 @@ class Registry
     {
         // \TimeLog::set(__METHOD__);
         $arr = [];
-        foreach ($this->_instances as $key => $value) {
+        foreach (self::$_instances as $key => $value) {
             array_push($arr,$key);
         }
         return $arr;

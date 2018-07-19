@@ -3,16 +3,22 @@ namespace Jiny\Core;
 
 use \Jiny\Core\Registry\Registry;
 use \Jiny\Core\Packages\Package;
-use \Jiny\Core\Boot\Bootstrap;
-use \Jiny\Core\Route\Route;
+use \Jiny\Core\Http\Bootstrap;
+use \Jiny\Core\Route\Routers;
 
+use \Jiny\Core\Http\Response;
 
 class Application
 {
     public $_uri = [];
+
     // protected $_control;
     public $_controller;
     public $_action = 'index';
+
+    public $_viewFile;
+    public $_data;
+
 
     public $_prams = [];
 
@@ -20,19 +26,24 @@ class Application
 
     public $_routes = [];
 
-
     /**
      * 인스턴스
      */
     public $Config;
     public $Registry;
-    public $boot;
+    public $Boot;
 
     public $Theme;
+    public $Route;
+    public $_routeAction;
+
     public $Packages;
 
+    // 
     public $_Country, $_Language;
 
+    use AppRun;
+ 
     // 생성자 매직 매서드
     public function __construct()
     {   
@@ -43,132 +54,127 @@ class Application
         $this->Packages = new Package ($this);
           
         // 인스턴스 레지스터
-        // 클래스 인스턴스 pool 초기화
-        $this->registerInit();
-        
-        // 레지스터에 Application을 등록합니다.
-        $this->Registry->setInstance("App",$this);       
-        $this->Registry->setInstance("Packages", $this->Packages);
+        $this->registry();
         
         // 환경설정 객체를 로드합니다. 
-        $this->configInit();        
-        
-        // 부트스트래핑
-        $this->boot = new Bootstrap($this);
-        $this->boot->parser();
-     
-        // 라우트를 처리합니다.
-        new Route($this);     
-        
-        // 테마 클래스를 생성합니다.
-        // Registry pool에 등록합니다
-        if ($this->Packages->isPackage("jiny/theme")) {
-            $this->Registry->createInstance("\Jiny\Theme\Theme","Theme", $this);
-            $this->Theme = $this->Registry->get("Theme");
-        }
-
-        if (!empty($this->_controller)) {
-            // 컨트롤러 호출
-            $this->controller();
+        if ($this->Config = Registry::get("CONFIG")) {
+            // 사용자 커스텀 설정 로드
+            $customConf = "./app/conf/"."config.php";
+            require $customConf;        
+            $this->Config->loadFiles();
 
         } else {
-            // URI가 비어 있는 경우 동작.
-            // echo "컨트롤러가 설정되어 있지 않습니다.<br>";
-            $this->default();       
+            echo "환경설정 파일을 읽어 올 수 없습니다.";
+            exit;
         }
+
+
+        // HTTP Request 인스턴스를 생성합니다.
+        if ($Request = Registry::create(\Jiny\Core\Http\Request::class, "Request", $this)) {
+
+            // 부트스트래핑
+            // $Boot = Registry::create(\Jiny\Core\Http\Bootstrap::class, "Boot", $Request);
+            $this->Boot = new Bootstrap($Request);
+            Registry::set("Boot", $this->Boot);
+
+        } else {
+            echo "HTTP Request 요청을 처리할 수 없습니다.";
+            exit;
+        }
+
+        
+        // 라우트를 처리합니다.
+        if ($this->Packages->isPackage("jiny/core")) {
+            $this->Route = Registry::create(\Jiny\Router\Routers::class, "Router", $this);
+            // echo "라우트 매핑을 처리합니다.<br>";
+            $response = $this->Route->routing();
+
+        } else {
+            if (!empty($this->Boot->_urlReals)) {   
+                // 컨트롤러 선택합니다.
+                $this->_controller = $this->Boot->setController('\Jiny\Core\IndexController');
+    
+                // 실행 매서드를 선택합니다.
+                $this->_action = $this->Boot->setMethod('index');
+    
+                // 파라미터
+                $this->_prams = $this->Boot->parmURL();
+    
+            } else {
+                // root 접속일 경우, URI가 비어있을 수 있습니다.
+            } 
+
+            // 라우트가 설치되어 있지 않은 경우
+            // 기본 처리기로 동작합니다.
+            $response = $this->run();
+        }
+
+
+        if($response) {
+
+            $res = new Response('Content', Response::HTTP_OK, array('content-type' => 'text/html'));
+            //$res = new Response();            
+
+            // 캐쉬방지 처리 해더 전송            
+            if (isset($cache)) {
+                if (!$cache) {
+                    header('Cache-Control: no-cache, no-store, must-revalidate'); // HTTP 1.1.
+                    header('Pragma: no-cache'); // HTTP 1.0.
+                    header('Expires: 0'); // Proxies.
+                }
+            }
+
+            if (is_string($response)) {
+                // Text 출력
+                $res->setContent($response);
+            }
+            // 배열 출력 
+            else if(is_array($response)) {
+                //echo "Array 입니다.";
+                $res->setContent(json_encode($response));
+            }
+           
+            $res->send();
+            
+        }
+    
+
+    
     }
 
-    private function registerInit()
+
+    private function registry()
     {
         \TimeLog::set(__METHOD__);
-        
+
+        // 클래스 인스턴스 pool 초기화
         $init = [];
         if ($this->Packages->isPackage("jiny/config")) {
             $init['CONFIG'] = \Jiny\Config\Config::class;
+        } else {
+            echo "jiny/config 패키지가 설치되어 있지 않습니다.";
+            exit;
         }
 
         if ($this->Packages->isPackage("jiny/frontmatter")) {
             $init['FrontMatter'] = \Jiny\Frontmatter\FrontMatter::class;
-        } 
+        } else {
+            echo "jiny/frontmatter 패키지가 설치되어 있지 않습니다.";
+            exit;
+        }
 
         $this->Registry = Registry::init($init);
         unset($init);
-    }
-
-    private function configInit()
-    {
-        // \TimeLog::set(__METHOD__);
-        $this->Config = $this->Registry->get("CONFIG");
-
-        $this->Config->autoUpFiles();
-        $this->Config->parser();
         
-        // \Jiny\Core\Registry::get("CONFIG")->setLoad("site.ini");
-        // \Jiny\Core\Registry::get("CONFIG")->setLoad("conf.php");
-        //echo "<hr>";
-    }
+        // 레지스터에 Application을 등록합니다.
+        $this->Registry->setInstance("App", $this);
 
-    /**
-     * 컨트롤러를 호출합니다.
-     */
-    public function controller()
-    {
-        // \TimeLog::set(__METHOD__);
-        // 컨트롤러 클래스 파일이 존재여부를 확인후에 처리함
-        // CONTROLLERS
-        $filename = ROOT."/App/Controllers/".$this->_controller. ".php";
-        //echo "컨트롤러 = ".$filename. "를 로드합니다.<br>";
-        if (file_exists($filename)) {
-            
-            // 인스턴스 생성, 재저장 합니다.
-            //echo "컨트롤러 인스턴스를 생성합니다.<br>";            
-            $this->_controller = $this->instanceFactory("\App\Controllers\\".$this->_controller);
-
-            $this->method();                       
-
-        } else {
-            //echo "컨트롤러 파일이 존재하지 않습니다.<br>";
-            // echo "기본 컨트롤러로 대체하여 실행이 됩니다.<br>";
-            $this->default();                             
-        }
-    }
-
-    /**
-     * 매서드를 호출합니다.
-     */
-    public function method()
-    {
-        // \TimeLog::set(__METHOD__);
-        if (method_exists($this->_controller, $this->_action)) {
-            //echo "메서드 호출";
-
-            // 콜백함수로 클래스의 메서드를 호출합니다.
-            call_user_func_array([$this->_controller, $this->_action], $this->_prams);
-        } else {
-           // echo "컨트롤러에 메서드가 존재하지 않습니다.";
-        } 
-
+        $this->Registry->setInstance("Packages", $this->Packages);
+        
         return $this;
     }
 
-
     /**
-     * 기본 컨트롤러
-     * pageController
+     * 
      */
-    private function default()
-    {
-        // \TimeLog::set(__METHOD__);
-        $this->_controller = $this->instanceFactory("\Jiny\Pages\Page");
-        $this->_body = $this->_controller->index();  
-    }
-
-    public function instanceFactory($name)
-    {
-        // \TimeLog::set(__METHOD__);
-        return new $name($this);
-    }
-
-
-    
 }
