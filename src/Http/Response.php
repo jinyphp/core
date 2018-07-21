@@ -488,7 +488,7 @@ class Response
      *
      * @final
      */
-    public function getCharset(): ?string
+    public function getCharset()
     {
         return $this->charset;
     }
@@ -735,7 +735,7 @@ class Response
      *
      * @final
      */
-    public function getMaxAge(): ?int
+    public function getMaxAge()
     {
         if ($this->headers->hasCacheControlDirective('s-maxage')) {
             return (int) $this->headers->getCacheControlDirective('s-maxage');
@@ -795,7 +795,7 @@ class Response
      *
      * @final
      */
-    public function getTtl(): ?int
+    public function getTtl()
     {
         $maxAge = $this->getMaxAge();
 
@@ -878,7 +878,7 @@ class Response
      *
      * @final
      */
-    public function getEtag(): ?string
+    public function getEtag()
     {
         return $this->headers->get('ETag');
     }
