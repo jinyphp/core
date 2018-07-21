@@ -632,7 +632,7 @@ class Response
      *
      * @final
      */
-    public function getDate(): ?\DateTimeInterface
+    public function getDate()
     {
         return $this->headers->getDate('Date');
     }
@@ -689,7 +689,7 @@ class Response
      *
      * @final
      */
-    public function getExpires(): ?\DateTimeInterface
+    public function getExpires()
     {
         try {
             return $this->headers->getDate('Expires');
@@ -841,7 +841,7 @@ class Response
      *
      * @final
      */
-    public function getLastModified(): ?\DateTimeInterface
+    public function getLastModified()
     {
         return $this->headers->getDate('Last-Modified');
     }
