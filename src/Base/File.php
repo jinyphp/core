@@ -37,7 +37,8 @@ class File
             self::mkdir($path['dirname']);
             
             // 윈도우의 경의 파일복사, 리눅스의 경우 심볼링크 처리
-            if(self::os() == "windows") copy($src,$dst); else symlink($src, $dst);
+            copy($src,$dst);
+            //if(self::os() == "windows") copy($src,$dst); else symlink($src, $dst);
             
             return true;
         } else {
@@ -51,16 +52,25 @@ class File
      */
     public static function mkdir($dir)
     {
-        $arr = explode(DS, self::osPath($dir));
+        $dir = str_replace("/", DIRECTORY_SEPARATOR, $dir);
+        // echo $dir."<br>";
+        $arr = explode(DIRECTORY_SEPARATOR, $dir );
         $path = "";
+
+        //print_r($arr);
+
         foreach ($arr as $name) {
             $path .= $name;
-            // echo $path."<br>";
-            if (is_dir($path)) {
+            //echo $path."<br>";
+            if(!$name || $name == "." || $name = "..") {
+                continue;
             } else {
-                if($path) mkdir($path);
+                if (!is_dir($path)) {
+                    \mkdir($path);
+                } 
+                $path .= DIRECTORY_SEPARATOR;
             }
-            $path .= DS;
+            
         }
     }
 

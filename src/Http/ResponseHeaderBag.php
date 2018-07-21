@@ -11,6 +11,8 @@
 
 namespace Jiny\Core\HTTP;
 
+use \Jiny\Core\Http\HeaderBag;
+
 /**
  * ResponseHeaderBag is a container for Response HTTP headers.
  *

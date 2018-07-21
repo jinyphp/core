@@ -11,6 +11,8 @@
 
 namespace Jiny\Core\HTTP;
 
+use \Jiny\Core\Http\HeaderUtils;
+
 /**
  * HeaderBag is a container for HTTP headers.
  *

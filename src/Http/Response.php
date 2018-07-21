@@ -11,6 +11,8 @@
 
 namespace Jiny\Core\HTTP;
 
+use \Jiny\Core\Http\ResponseHeaderBag;
+
 /**
  * Response represents an HTTP response.
  *
