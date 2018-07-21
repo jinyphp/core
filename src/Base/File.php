@@ -60,14 +60,21 @@ class File
         //print_r($arr);
 
         foreach ($arr as $name) {
-            $path .= $name;
-            //echo $path."<br>";
-            if(!$name || $name == "." || $name = "..") {
+            
+            //echo $name;
+            if(!$name || $name == "." || $name == "..") {
+                //echo "continue $name <br>";
                 continue;
             } else {
+                $path .= $name;
                 if (!is_dir($path)) {
-                    \mkdir($path);
-                } 
+                    if(\mkdir($path)) {
+                        //echo "생성 = ".$path."<br>";
+                    } else {
+                        //echo $path." 디렉토리를 생성할 수 없습니다.<br>";
+                    }
+                }
+                //echo "path=".$path."<br>";
                 $path .= DIRECTORY_SEPARATOR;
             }
             
