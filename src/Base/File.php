@@ -11,8 +11,6 @@ class File
         if(DIRECTORY_SEPARATOR == "/") return "linux"; else return "windows";
     }
 
-
-
     /**
      * 운영체제에 맞게 path를 재조정합니다.
      */
@@ -66,10 +64,13 @@ class File
         }
     }
 
+    /**
+     * 디렉토리의 목록을 읽어옵니다.
+     * 배열값으로 받습니다.
+     */
     public static function dir($path)
     {
         // 디렉토리 목록을 배열로 가지고 옵니다.       
-
         $dir = [];
         foreach (scandir($path) as $value) {
             // . .. 은 제외합니다.
@@ -80,8 +81,16 @@ class File
         return $dir;
     }
 
+    /**
+     * 디렉토리 안에 지정한 파일명이 있는지를 검사합니다.
+     */
+    public function isNameDir($name, $dir)
+    {
+
+    }
 
 
-
-
+    /**
+     * 
+     */
 }
