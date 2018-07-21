@@ -1,5 +1,5 @@
 <?php
-namespace Jiny\Core\HTTP;
+namespace Jiny\Core\Http;
 
 class Request
 {

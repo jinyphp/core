@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Jiny\Core\HTTP;
+namespace Jiny\Core\Http;
 
 /**
  * HTTP header utility functions.
