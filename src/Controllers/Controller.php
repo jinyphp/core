@@ -29,30 +29,14 @@ class Controller
     }
 
 
-
-
     /**
      * 뷰 객체를 생성합니다.
      * 진행합니다.
      */
-
-     /*
-    public function view($viewName=Null, $datas=[])
+    public function view($name=Null, $datas=[])
     {
-        \TimeLog::set(__METHOD__);
-
-        // $this->View = new \Jiny\Core\Views\View($this);
-        $this->View = $this->viewFactory();
-
-        // 뷰 데이터를 설정합니다.
-        // $this->View->appendViewData("datas", $datas);
-        $this->View->view_data["datas"] = _array_KeyAppend($this->View->view_data,"datas", $datas);
-
-        
-        // 뷰를 처리합니다.
-        return $this->View->process($viewName);        
+        return view($name, $datas);
     }
-    */
 
 
     /**
@@ -85,8 +69,8 @@ class Controller
      */
     public function getPath()
     {
-        // \TimeLog::set(__METHOD__);
-        $url = $this->App->Boot->URL();
+        $url = $this->App->Request->_uri;
+
         if ($url) {
             $path = DS;
             foreach ($url as $value) {

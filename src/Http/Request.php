@@ -1,9 +1,27 @@
 <?php
+/*
+ * This file is part of the jinyPHP package.
+ *
+ * (c) hojinlee <infohojin@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Jiny\Core\Http;
 
 class Request
 {
     private $App;
+
+    public $_base;
+
+    // URI,Query 정보
+    public $_url = [];
+    public $_query = [];
+
+    public $_language;
+    public $_country;
+    public $_uri;
 
     /**
      * 초기화
@@ -15,38 +33,63 @@ class Request
     }
 
     /**
-     * REQUEST URL에서 도메인 이후 부분의 반환합니다.
-     * 예를들어 URL 요청을 `http://domain.com/foo/bar`와 같이 입력을 했다면 request의 `path` 메소드는 도메인 이후 부분의 `foo/bar`를 반환 합니다.
+     * url을 문자열로 반환합니다.
      */
-    public function path()
+    public function urlString()
     {
-        return $_SERVER['REQUEST_URI'];
-    }
-
-    public function is($url)
-    {
-
+        $string = "";
+        if($this->_uri){
+            foreach ($this->_uri as $value) $string .= "/".$value;
+            return $string;
+        }        
     }
 
     /**
-     * 쿼리스트링을 제외한 모든 REQUEST_URI를 반환합니다.
+     * URI에서 컨트롤러를 추출합니다.
      */
-    public function url()
+    public function getController($default=NULL)
     {
-        return explode('?', $_SERVER['REQUEST_URI'])[0];
-    }
-
-    public function fullUrl()
-    {
-
+        if (!empty($this->_uri)) {
+            
+            // 컨트롤러는 URI의 첫번째 단어 입니다.
+            if (isset($this->_uri[0])) {
+                // 첫글자 대문자
+                // 낙타스타일
+                return ucwords($this->_uri[0])."Controller";
+            } else {
+                // 값이 없는 경우 기본으로 설정합니다.
+                return $default;
+            }
+        }
     }
 
     /**
-     * HTTP 접속 매소드를 확인합니다.
+     * URI에서 메소드를 추출합니다.
      */
-    public function method()
+   public function getMethod($default=NULL)
     {
-        return $_SERVER['REQUEST_METHOD'];
+        if (!empty($this->_uri)) {
+            
+            // 메소드는 URI의 두번째 단어 입니다.
+            if (isset($this->_uri[1])) {
+                return $this->_uri[1];
+            } else {
+                return $default;
+            }
+        }
+    }
+
+    /**
+     * 파라미터를 선택합니다.
+     */
+    public function parm()
+    {
+        $url = $this->_uri;
+
+        // 추가 $url 배열값이 없는 경우 비어있는 [] 배열을 저장
+        unset($url[0],$url[1]);
+        
+        return !empty($url) ? array_values($url): [];
     }
 
     /**

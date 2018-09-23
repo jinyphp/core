@@ -1,37 +1,39 @@
 <?php
+/*
+ * This file is part of the jinyPHP package.
+ *
+ * (c) hojinlee <infohojin@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Jiny\Core;
 
 use \Jiny\Core\Registry\Registry;
 use \Jiny\Core\Packages\Package;
 use \Jiny\Core\Http\Bootstrap;
+
 use \Jiny\Core\Route\Routers;
+
 
 use \Jiny\Core\Http\Response;
 
-class Application
+class Application extends Core
 {
-    public $_uri = [];
-
     // protected $_control;
     public $_controller;
     public $_action = 'index';
+    public $_prams = [];
 
     public $_viewFile;
     public $_data;
-
-
-    public $_prams = [];
-
-    // protected $_body;
-
-    public $_routes = [];
 
     /**
      * 인스턴스
      */
     public $Config;
     public $Registry;
-    public $Boot;
+    public $Request;
 
     public $Theme;
     public $Route;
@@ -40,15 +42,13 @@ class Application
     public $Packages;
 
     // 
-    public $_Country, $_Language;
+    // public $_Country, $_Language;
 
     use AppRun;
  
     // 생성자 매직 매서드
     public function __construct()
     {   
-        \TimeLog::set(__CLASS__."가 생성이 되었습니다.");
-
         // 설치된 페키지 목록을 저장합니다.
         // 오류 방지를 위하여 설치 사전에 체크
         $this->Packages = new Package ($this);
@@ -58,10 +58,15 @@ class Application
         
         // 환경설정 객체를 로드합니다. 
         if ($this->Config = Registry::get("CONFIG")) {
+            $Config = $this->Config;
             // 사용자 커스텀 설정 로드
             $customConf = "./app/conf/"."config.php";
-            require $customConf;        
-            $this->Config->loadFiles();
+            if(file_exists($customConf)){
+                require $customConf;
+            } else {
+                $this->Config->autoSet();
+            }
+            $this->Config->loadFiles();            
 
         } else {
             echo "환경설정 파일을 읽어 올 수 없습니다.";
@@ -70,50 +75,43 @@ class Application
 
 
         // HTTP Request 인스턴스를 생성합니다.
-        if ($Request = Registry::create(\Jiny\Core\Http\Request::class, "Request", $this)) {
+        if ($this->Request = Registry::create(\Jiny\Core\Http\Request::class, "Request", $this)) {
 
             // 부트스트래핑
-            // $Boot = Registry::create(\Jiny\Core\Http\Bootstrap::class, "Boot", $Request);
-            $this->Boot = new Bootstrap($Request);
-            Registry::set("Boot", $this->Boot);
+            new Bootstrap($this->Request);
+
+            // 부트스트래핑을 통하여 uri분석 처리가 되어 있어야 합니다.
+            if (!empty($this->Request->_uri)) {           
+                $this->_controller = $this->Request->getController('\Jiny\Core\IndexController');    
+                $this->_action = $this->Request->getMethod('index');   
+                $this->_prams = $this->Request->parm();    
+            } else {
+                // root 접속일 경우, URI가 비어있을 수 있습니다.
+            } 
 
         } else {
             echo "HTTP Request 요청을 처리할 수 없습니다.";
             exit;
         }
 
-        
+
         // 라우트를 처리합니다.
         if ($this->Packages->isPackage("jiny/core")) {
-            $this->Route = Registry::create(\Jiny\Router\Routers::class, "Router", $this);
-            // echo "라우트 매핑을 처리합니다.<br>";
-            $response = $this->Route->routing();
+            $Route = new \Jiny\Router\Routers;
+            $info = $Route->routing();
 
-        } else {
-            if (!empty($this->Boot->_urlReals)) {   
-                // 컨트롤러 선택합니다.
-                $this->_controller = $this->Boot->setController('\Jiny\Core\IndexController');
-    
-                // 실행 매서드를 선택합니다.
-                $this->_action = $this->Boot->setMethod('index');
-    
-                // 파라미터
-                $this->_prams = $this->Boot->parmURL();
-    
-            } else {
-                // root 접속일 경우, URI가 비어있을 수 있습니다.
-            } 
+            if($Route->_viewFile){
+                $This->_viewFile = $Route->_viewFile;
+            }
 
-            // 라우트가 설치되어 있지 않은 경우
-            // 기본 처리기로 동작합니다.
-            $response = $this->run();
-        }
+            // 라우트 메모리 해제
+            unset($Route);
+        } 
 
+        // 브라우저로 반환될 response가 있을 경우
+        if($response = $this->run($info)) {
 
-        if($response) {
-
-            $res = new Response('Content', Response::HTTP_OK, array('content-type' => 'text/html'));
-            //$res = new Response();            
+            $res = new Response('Content', Response::HTTP_OK, array('content-type' => 'text/html'));         
 
             // 캐쉬방지 처리 해더 전송            
             if (isset($cache)) {
@@ -136,10 +134,11 @@ class Application
            
             $res->send();
             
+        } else {
+            echo "no response";
         }
-    
-
-    
+ 
+        //
     }
 
 

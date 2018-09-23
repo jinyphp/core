@@ -23,7 +23,7 @@ class Path
         // 배열을 반대로 뒤집기
         $dst = \array_reverse($dst);
 
-        $src = explode(DIRECTORY_SEPARATOR, $src);
+        $src = explode(DIRECTORY_SEPARATOR, trim($src, DIRECTORY_SEPARATOR));
         for ($i=0, $j=0;$i<count($src);$i++) {
             if($src[$i] == ".") unset($src[$i]);
             else if($src[$i] == "..") {
