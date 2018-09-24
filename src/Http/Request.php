@@ -93,6 +93,24 @@ class Request
     }
 
     /**
+     * 로케일 국가를 설정합니다.
+     */
+    public function setCountry($country)
+    {
+        $this->_Country = $country;
+        config_set("country", $country);
+    }
+
+    /**
+     * 로케일 언어를 설정합니다.
+     */
+    public function setLanguage($language)
+    {
+        $this->_Language = $language;
+        config_set("language", $language);
+    }
+
+    /**
      * 
      */
 }

@@ -27,12 +27,26 @@ class Bootstrap
         $this->Request = $request;
 
         // 시작 url을 기반으로 uri를 분석합니다.
-        $this->Request->_base = conf("site.BASEURL");
-        $this->url($this->Request->_base);
-        $this->Request->_uri = $this->uri($this->Request->_url);
+        $this->process();
 
     }
 
+    /**
+     * >템플릿 메소드
+     * 부트스트래핑의 처리 알고리즘을 순차적으로 실행합니다.
+     */
+    private function process()
+    {
+        // 기본 DocuemntRoot URL을 지정합니다.
+        $this->Request->_base = conf("site.BASEURL");
+        $this->url($this->Request->_base);
+        $this->Request->_uri = $this->uri($this->Request->_url);
+    }
+
+
+    /**
+     * URL을 구분합니다.
+     */
     public function url($base)
     {
         // ?쿼리스트링 분리
@@ -45,17 +59,31 @@ class Bootstrap
         
         // query 분리
         if(isset($url[1])) {
-            $query = explode('&', $url[1]);
-            foreach ($query as $value) {
-                $k = explode('=', $value);
-                $arr[ $k[0] ] = $k[1];
-            }
-            $this->Request->_query = $arr;
-        }
-        
+            $this->Request->_query = $this->queryString($url[1]);
+        }        
 
         return $this;
     }
+    
+
+    /**
+     * 쿼리스트링 형식의 문자열을 분석합니다.
+     */
+    public function queryString($str)
+    {
+        // 스트링을  &구분자를 분리합니다.
+        $query = explode('&', $str);
+
+        // &구분자 횟수만큼 분석을 합니다.
+        foreach ($query as $value) {
+            // 데이터는 = 로 키,값을 구분합니다.
+            $k = explode('=', $value);
+            $arr[ $k[0] ] = $k[1];
+        }
+
+        return $arr;
+    }
+
 
     /**
      * $base는 url 시작이 부분을 스킵처리 합니다.
@@ -76,8 +104,10 @@ class Bootstrap
     {      
         // 로케일 검사
         if ( $locale = $this->isLocale($urls) ) {
-            $this->Request->_country = $locale['country'];
-            $this->Request->_language = $locale['language'];
+          
+
+            $this->Request->setCountry($locale['country']);
+            $this->Request->setLanguage($locale['language']);
 
             // 로케일이 있는 경우
             // uri 배열을 생성합니다.
@@ -91,6 +121,7 @@ class Bootstrap
             return $urls;
         }
     }
+
 
     /**
      * URI 로케일을 분석합니다.
