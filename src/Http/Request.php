@@ -32,6 +32,7 @@ class Request
         $this->App = $app;
     }
 
+
     /**
      * url을 문자열로 반환합니다.
      */
@@ -43,6 +44,7 @@ class Request
             return $string;
         }        
     }
+
 
     /**
      * URI에서 컨트롤러를 추출합니다.
@@ -63,6 +65,7 @@ class Request
         }
     }
 
+
     /**
      * URI에서 메소드를 추출합니다.
      */
@@ -79,6 +82,7 @@ class Request
         }
     }
 
+
     /**
      * 파라미터를 선택합니다.
      */
@@ -92,6 +96,7 @@ class Request
         return !empty($url) ? array_values($url): [];
     }
 
+
     /**
      * 로케일 국가를 설정합니다.
      */
@@ -101,6 +106,7 @@ class Request
         config_set("country", $country);
     }
 
+    
     /**
      * 로케일 언어를 설정합니다.
      */

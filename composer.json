@@ -1,8 +1,8 @@
 {
     "name": "jiny/core",
-    "description": "jiny framwork core",
+    "description": "jinyPHP core",
     "keywords": [
-        "jiny",
+        "jinyPHP",
         "framwork"
     ],
     "homepage": "http://jiny.hojin.io",

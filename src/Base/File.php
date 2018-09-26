@@ -1,4 +1,12 @@
 <?php
+/*
+ * This file is part of the jinyPHP package.
+ *
+ * (c) hojinlee <infohojin@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Jiny\Core\Base;
 
 class File
@@ -11,6 +19,7 @@ class File
         if(DIRECTORY_SEPARATOR == "/") return "linux"; else return "windows";
     }
 
+
     /**
      * 운영체제에 맞게 path를 재조정합니다.
      */
@@ -19,12 +28,17 @@ class File
         return str_replace("/", DS, $path);
     }
 
+
+    /**
+     * 
+     */
     public static function path($path)
     {
         $path = str_replace("/", DS, $path);
         $path = str_replace("\\", DS, $path);
         return $path;
     }
+
 
     /**
      * 파일을 복사합니다.
@@ -45,6 +59,7 @@ class File
             return false;
         }
     }
+
 
     /**
      * 디렉토리를 생성합니다.
@@ -81,6 +96,7 @@ class File
         }
     }
 
+
     /**
      * 디렉토리의 목록을 읽어옵니다.
      * 배열값으로 받습니다.
@@ -98,6 +114,7 @@ class File
         return $dir;
     }
 
+
     /**
      * 디렉토리 안에 지정한 파일명이 있는지를 검사합니다.
      */
@@ -105,7 +122,6 @@ class File
     {
 
     }
-
 
     /**
      * 

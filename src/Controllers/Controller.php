@@ -1,5 +1,12 @@
 <?php
-
+/*
+ * This file is part of the jinyPHP package.
+ *
+ * (c) hojinlee <infohojin@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Jiny\Core\Controllers;
 
 use \Jiny\Core\Registry\Registry;
@@ -14,12 +21,19 @@ class Controller
 
     protected $View;
 
+    /**
+     * 
+     */
     public function getApp()
     {
         // \TimeLog::set(__METHOD__);
         return $this->App;
     }
 
+
+    /**
+     * 
+     */
     public function setApp($app)
     {
         // \TimeLog::set(__METHOD__);
@@ -44,16 +58,6 @@ class Controller
      * 레지스트리에 저장합니다.
      */
 
-     /*
-    public function viewFactory()
-    {
-        //echo "뷰 객체를 생성합니다.<br>";
-        return Registry::create(\Jiny\Views\View::class, "view", $this);
-    }
-    */
-
-
-
     public function viewPath()
     {
         // \TimeLog::set(__METHOD__);
@@ -63,6 +67,7 @@ class Controller
         return $this->viewFile;
         */
     }
+
 
     /**
      * 정적 페이지의 파일 경로를 재생성합니다.
@@ -85,7 +90,6 @@ class Controller
     }
 
 
-
     /**
      * 데이터베이스 모델
      */
@@ -103,5 +107,4 @@ class Controller
     /**
      * 
      */
-
 }

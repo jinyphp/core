@@ -1,4 +1,12 @@
 <?php
+/*
+ * This file is part of the jinyPHP package.
+ *
+ * (c) hojinlee <infohojin@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Jiny\Core\Http;
 
 use \Jiny\Core\Registry\Registry;
@@ -21,7 +29,9 @@ class Bootstrap
     private $_configSite;
 
     
-
+    /**
+     * 
+     */
     public function __construct($request)
     {
         $this->Request = $request;
@@ -30,6 +40,7 @@ class Bootstrap
         $this->process();
 
     }
+
 
     /**
      * >템플릿 메소드
@@ -97,6 +108,7 @@ class Bootstrap
         }
     }
 
+
     /**
      * 실제 URI을 식별자를 정리합니다.
      */
@@ -152,5 +164,4 @@ class Bootstrap
     /**
      * 
      */
-
 }

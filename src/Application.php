@@ -46,7 +46,10 @@ class Application extends Core
 
     use AppRun;
  
-    // 생성자 매직 매서드
+
+    /**
+     * 생성자 매직 매서드
+     */
     public function __construct()
     {   
         // 설치된 페키지 목록을 저장합니다.
@@ -142,10 +145,11 @@ class Application extends Core
     }
 
 
+    /**
+     * 
+     */
     private function registry()
     {
-        \TimeLog::set(__METHOD__);
-
         // 클래스 인스턴스 pool 초기화
         $init = [];
         if ($this->Packages->isPackage("jiny/config")) {
@@ -172,6 +176,24 @@ class Application extends Core
         
         return $this;
     }
+
+    
+    /**
+     * 설정된 뷰 파일을 반환합니다.
+     */
+    public function getViewFile()
+    {
+        return $this->_viewFile;
+    }
+
+    /**
+     * 뷰를 설정합니다.
+     */
+    public function setViewFile($file)
+    {
+        $this->_viewFile = $file;
+    }
+
 
     /**
      * 

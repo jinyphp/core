@@ -16,11 +16,18 @@ namespace Jiny\Core\Registry;
 
 class Registry
 {
+    /**
+     * 
+     */
     private function __construct()
     {
         // 싱글톤 비활성화로 처리합니다.
     }
 
+
+    /**
+     * 
+     */
     private function __clone()
     {
         // 싱글톤 비활성화로 처리합니다.
@@ -38,7 +45,6 @@ class Registry
      */
     public static function init($list=NULL)
     {
-        // \TimeLog::set(__METHOD__);
         // echo "레지스트리를 초기화 합니다.<br>";
         self::$_instances = [];
 
@@ -51,6 +57,7 @@ class Registry
         return new self();
     }
 
+
     /**
      * 인스턴스를 생성 등록합니다.
      */
@@ -59,12 +66,12 @@ class Registry
         return self::createInstance($name, $key, $instance);
     }
 
+
     /**
      * 
      */
     public static function createInstance($name, $key=NULL, $instance=NULL)
     {
-        // \TimeLog::set(__METHOD__);
         // 싱글톤 메서드 확인
         if (method_exists($name, "instance")) {
             // 싱글톤 메서드를 통하여 인스턴스를 생성합니다.
@@ -93,6 +100,7 @@ class Registry
         return $obj;
     }
 
+
     /**
      * 저장된 인스턴스를 반환합니다.
      */
@@ -108,6 +116,7 @@ class Registry
         }
     }
 
+
     /**
      * 인스턴스를 저장합니다.
      */
@@ -116,12 +125,16 @@ class Registry
         self::$_instances[$key] = $instance;
     }
 
+    /**
+     * 
+     */
     public function setInstance($key, $instance)
     {
         // \TimeLog::set(__METHOD__);
         // $this->_instances[$key] = $instance;
         self::$_instances[$key] = $instance;
     }
+
 
     /**
      * 인스턴스를 삭제합니다.
@@ -132,13 +145,13 @@ class Registry
         unset(self::$_instances[$key]);
     }
 
+
     /**
      * 인스턴스 목록
      * 키값만 추출하여 반환합니다.
      */
     public function lists()
     {
-        // \TimeLog::set(__METHOD__);
         $arr = [];
         foreach (self::$_instances as $key => $value) {
             array_push($arr,$key);
@@ -146,14 +159,16 @@ class Registry
         return $arr;
     }
 
+
     /**
      * 전체 인스턴스
      */
     public function instances()
     {
-        // \TimeLog::set(__METHOD__);
         return $this->_instances;
     }
 
-
+    /**
+     * 
+     */
 }

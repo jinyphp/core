@@ -14,6 +14,9 @@ class Package
     private $Application;
     private $_packages;
 
+    /**
+     * 
+     */
     public function __construct($app)
     {
         // 
@@ -22,6 +25,7 @@ class Package
         // 컴포저 패키지 정보를 읽어옵니다.
         $this->set();
     }
+
 
     /**
      * 컴포저 패키지 정보를 읽어옵니다.
@@ -36,6 +40,7 @@ class Package
         return $this;
     }
 
+
     /**
      * 패지키 전체 정보값을 반환합니다.
      */
@@ -45,6 +50,7 @@ class Package
         return $this->_packages;
     }
 
+
     /**
      * 패키지 require 부분을 반환합니다.
      */
@@ -53,6 +59,7 @@ class Package
         // \TimeLog::set(__METHOD__);
         return $this->_packages->require;
     }
+
 
     public function isPackage($name=NULL)
     {
@@ -64,4 +71,8 @@ class Package
 
         return NULL;
     }
+
+    /**
+     * 
+     */
 }

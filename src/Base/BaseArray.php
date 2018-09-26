@@ -1,8 +1,19 @@
 <?php
+/*
+ * This file is part of the jinyPHP package.
+ *
+ * (c) hojinlee <infohojin@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Jiny\Core\Base;
 
 class BaseArray
 {
+    /**
+     * 
+     */
     public static function append($src, $arr)
     {
         echo __METHOD__."<br>";
@@ -12,6 +23,10 @@ class BaseArray
         }
     }
 
+
+    /**
+     * 
+     */
     public static function path($arr)
     {
         if(count($arr)){
@@ -24,5 +39,7 @@ class BaseArray
         }
     }
 
-
+    /**
+     * 
+     */
 }
