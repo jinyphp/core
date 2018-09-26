@@ -102,7 +102,7 @@ class Request
      */
     public function setCountry($country)
     {
-        $this->_Country = $country;
+        $this->_country = $country;
         config_set("country", $country);
     }
 
@@ -112,7 +112,7 @@ class Request
      */
     public function setLanguage($language)
     {
-        $this->_Language = $language;
+        $this->_language = $language;
         config_set("language", $language);
     }
 
