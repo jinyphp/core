@@ -103,7 +103,10 @@ class Request
     public function setCountry($country)
     {
         $this->_country = $country;
+
+        // 글로벌 설정값
         config_set("country", $country);
+        config_set("req.country", $country);
     }
 
     
@@ -113,7 +116,10 @@ class Request
     public function setLanguage($language)
     {
         $this->_language = $language;
+        
+        // 글로벌 설정값
         config_set("language", $language);
+        config_set("req.language", $language);
     }
 
     /**

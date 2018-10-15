@@ -62,14 +62,7 @@ class Application extends Core
         // 환경설정 객체를 로드합니다. 
         if ($this->Config = Registry::get("CONFIG")) {
             $Config = $this->Config;
-            // 사용자 커스텀 설정 로드
-            $customConf = "./app/conf/"."config.php";
-            if(file_exists($customConf)){
-                require $customConf;
-            } else {
-                $this->Config->autoSet();
-            }
-            $this->Config->loadFiles();            
+                        
 
         } else {
             echo "환경설정 파일을 읽어 올 수 없습니다.";
@@ -82,6 +75,21 @@ class Application extends Core
 
             // 부트스트래핑
             new Bootstrap($this->Request);
+
+            config_set("req.uri", $this->Request->_uri);
+            config_set("req.string", $this->Request->urlString());
+
+
+            // 사용자 커스텀 설정 로드
+            $customConf = "./app/conf/"."config.php";
+            if(file_exists($customConf)){
+                require $customConf;
+            } else {
+                $this->Config->autoSet();
+            }
+            $this->Config->loadFiles();
+            
+
 
             // 부트스트래핑을 통하여 uri분석 처리가 되어 있어야 합니다.
             if (!empty($this->Request->_uri)) {           
