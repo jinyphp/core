@@ -105,9 +105,17 @@ trait AppRun
                 $this->_prams);
             
         } else {
-           echo "컨트롤러에 메서드가 존재하지 않습니다. ";
-           echo "stopping";
-           exit;
+
+            if (method_exists($this->_controller, "__invoke")) {
+                // __invoke() 함수를 호출합니다.
+                return call_user_func_array(
+                    $this->_controller, 
+                    $this->_prams);
+            } else {
+                echo "컨트롤러에 메서드가 존재하지 않습니다. ";
+                exit;
+            }
+           
         } 
     }
 

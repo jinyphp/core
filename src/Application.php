@@ -108,6 +108,8 @@ class Application extends Core
 
         // 라우트를 처리합니다.
         if ($this->Packages->isPackage("jiny/core")) {
+
+            // 라우팅
             $Route = new \Jiny\Router\Routers;
             $info = $Route->routing();
 

@@ -49,7 +49,9 @@ class Controller
      */
     public function view($name=Null, $datas=[])
     {
-        return view($name, $datas);
+        if ($name) {
+            return view($name, $datas);
+        }
     }
 
 
