@@ -77,9 +77,6 @@ class Application extends Core
             $boot = new Bootstrap($this->Request);
             config_set("req", $boot->resource);
 
-            var_dump(conf("req"));
-
-
             config_set("req.uri", $this->Request->_uri);
             config_set("req.string", $this->Request->urlString());
 

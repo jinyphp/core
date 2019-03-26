@@ -89,7 +89,9 @@ class Bootstrap
         if(isset($q[1])) {
             $this->resource['query'] = $q[1];
             return $this->resource['query'];
-        }     
+        }
+        
+        return null;
     }
 
     private function _uriData()
@@ -139,7 +141,8 @@ class Bootstrap
     private function _queryData()
     {
         // 스트링을  &구분자를 분리합니다.
-        if ($query = explode('&', $this->_query())) {
+        $query = explode('&', $this->_query());
+        if (is_array($query)) {
 
             $arr = [];
 
