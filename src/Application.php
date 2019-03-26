@@ -115,13 +115,15 @@ class Application extends Core
             $Route = new \Jiny\Router\Routers;
             $info = $Route->routing();
 
+            // 라우트에서 뷰파일을 설정한 경우 읽어옴.
             if($Route->_viewFile){
-                $This->_viewFile = $Route->_viewFile;
+                $this->_viewFile = $Route->_viewFile;
             }
 
             // 라우트 메모리 해제
             unset($Route);
         } 
+
 
         // 브라우저로 반환될 response가 있을 경우
         if($response = $this->run($info)) {

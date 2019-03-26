@@ -79,6 +79,7 @@ trait AppRun
             $this->_controller = new $name ($this);
             
             Registry::set("controller", $this->_controller);
+            
             // 메서드 실행 반환
             return $this->method();
 
@@ -96,7 +97,6 @@ trait AppRun
     public function method()
     {
         if (method_exists($this->_controller, $this->_action)) {
-       
             return call_user_func_array(
                 [
                     $this->_controller, 
@@ -105,7 +105,6 @@ trait AppRun
                 $this->_prams);
             
         } else {
-
             if (method_exists($this->_controller, "__invoke")) {
                 // __invoke() 함수를 호출합니다.
                 return call_user_func_array(
