@@ -74,7 +74,11 @@ class Application extends Core
         if ($this->Request = Registry::create(\Jiny\Core\Http\Request::class, "Request", $this)) {
 
             // 부트스트래핑
-            new Bootstrap($this->Request);
+            $boot = new Bootstrap($this->Request);
+            config_set("req", $boot->resource);
+
+            var_dump(conf("req"));
+
 
             config_set("req.uri", $this->Request->_uri);
             config_set("req.string", $this->Request->urlString());
@@ -95,7 +99,8 @@ class Application extends Core
             if (!empty($this->Request->_uri)) {           
                 $this->_controller = $this->Request->getController('\Jiny\Core\IndexController');    
                 $this->_action = $this->Request->getMethod('index');   
-                $this->_prams = $this->Request->parm();    
+                $this->_prams = $this->Request->parm(); 
+                
             } else {
                 // root 접속일 경우, URI가 비어있을 수 있습니다.
             } 
