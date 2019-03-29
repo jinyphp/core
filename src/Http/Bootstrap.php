@@ -236,14 +236,21 @@ class Bootstrap
      */
     public function queryString($str)
     {
+        $arr = [];
         // 스트링을  &구분자를 분리합니다.
         $query = explode('&', $str);
 
         // &구분자 횟수만큼 분석을 합니다.
         foreach ($query as $value) {
             // 데이터는 = 로 키,값을 구분합니다.
-            $k = explode('=', $value);
-            $arr[ $k[0] ] = $k[1];
+            if ($value) {
+                $k = explode('=', $value);
+                if (isset($k[0])) {
+                    $arr[ $k[0] ] = $k[1];
+            
+                }
+            }
+            
         }
 
         return $arr;
