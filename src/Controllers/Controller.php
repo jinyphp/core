@@ -26,7 +26,6 @@ class Controller
      */
     public function getApp()
     {
-        // \TimeLog::set(__METHOD__);
         return $this->App;
     }
 
@@ -36,7 +35,6 @@ class Controller
      */
     public function setApp($app)
     {
-        // \TimeLog::set(__METHOD__);
         if (isset($app)) {
             $this->App = $app;
         }
@@ -47,12 +45,14 @@ class Controller
      * 뷰 객체를 생성합니다.
      * 진행합니다.
      */
+    /*
     public function view($name=Null, $datas=[])
     {
         if ($name) {
             return view($name, $datas);
         }
     }
+    */
 
 
     /**

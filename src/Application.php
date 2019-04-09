@@ -130,7 +130,8 @@ class Application extends Core
 
             $res = new Response('Content', Response::HTTP_OK, array('content-type' => 'text/html'));         
 
-            // 캐쉬방지 처리 해더 전송            
+            // 캐쉬방지 처리 해더 전송
+            /*         
             if (isset($cache)) {
                 if (!$cache) {
                     header('Cache-Control: no-cache, no-store, must-revalidate'); // HTTP 1.1.
@@ -138,6 +139,9 @@ class Application extends Core
                     header('Expires: 0'); // Proxies.
                 }
             }
+            */
+
+
 
             if (is_string($response)) {
                 // Text 출력
@@ -147,6 +151,8 @@ class Application extends Core
             else if(is_array($response)) {
                 //echo "Array 입니다.";
                 $res->setContent(json_encode($response));
+            } else {
+                
             }
            
             $res->send();
