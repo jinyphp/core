@@ -64,7 +64,7 @@ class Bootstrap
     // 기본 url
     private function _base()
     {
-        $this->resource['base'] = conf("site.BASEURL");
+        $this->resource['base'] = \jiny\conf("site.BASEURL");
         return $this->resource['base'];
     }
 
@@ -203,7 +203,7 @@ class Bootstrap
     private function process()
     {
         // 기본 DocuemntRoot URL을 지정합니다.
-        $this->Request->_base = conf("site.BASEURL");
+        $this->Request->_base = \jiny\conf("site.BASEURL");
         $this->url($this->Request->_base);
         $this->Request->_uri = $this->uri($this->Request->_url);
     }

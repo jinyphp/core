@@ -75,10 +75,10 @@ class Application extends Core
 
             // 부트스트래핑
             $boot = new Bootstrap($this->Request);
-            config_set("req", $boot->resource);
+            \jiny\config_set("req", $boot->resource);
 
-            config_set("req.uri", $this->Request->_uri);
-            config_set("req.string", $this->Request->urlString());
+            \jiny\config_set("req.uri", $this->Request->_uri);
+            \jiny\config_set("req.string", $this->Request->urlString());
 
 
             // 사용자 커스텀 설정 로드
