@@ -9,6 +9,20 @@
  */
 use \Jiny\Core\Registry\Registry;
 
+namespace jiny;
+
+function core()
+{
+    $type = isset($_SERVER['CONTENT_TYPE']) ? $_SERVER['CONTENT_TYPE'] : null;
+    if ($type == 'application/json') {
+        return "api";
+    } else {
+        //if ($_SERVER['HTTP_CONTENT_TYPE'] == 'content-type: text/html') {
+        return "html";
+    }
+}
+
+
 if (! function_exists('windows_os')) {
     /**
      * 
@@ -73,4 +87,5 @@ if (! function_exists('country')) {
         }
     }
 }
+
 
