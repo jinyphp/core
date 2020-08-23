@@ -9,7 +9,21 @@
  */
 namespace Jiny\Core;
 
-class Core
+class Core 
 {
+    // 싱글턴 초기화
+    use \Jiny\Petterns\Singleton;
+    private function init()
+    {
+
+    }
+    
+    public function __construct()
+    {
+        echo __CLASS__;
+    }
+
+    
+    
 
 }

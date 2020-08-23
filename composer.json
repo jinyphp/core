@@ -17,7 +17,8 @@
     ],
     "minimum-stability": "stable",
     "require": {
-        "php": ">= 7.0"
+        "php": ">= 7.0",
+        "jiny/petterns": "^0.0.1"
         
     },
     "autoload": {

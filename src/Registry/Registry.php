@@ -16,18 +16,12 @@ namespace Jiny\Core\Registry;
 
 class Registry
 {
-    /**
-     * 
-     */
+
     private function __construct()
     {
         // 싱글톤 비활성화로 처리합니다.
     }
 
-
-    /**
-     * 
-     */
     private function __clone()
     {
         // 싱글톤 비활성화로 처리합니다.

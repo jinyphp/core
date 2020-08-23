@@ -9,18 +9,46 @@
  */
 use \Jiny\Core\Registry\Registry;
 
-namespace jiny;
 
-function core()
-{
-    $type = isset($_SERVER['CONTENT_TYPE']) ? $_SERVER['CONTENT_TYPE'] : null;
-    if ($type == 'application/json') {
-        return "api";
-    } else {
-        //if ($_SERVER['HTTP_CONTENT_TYPE'] == 'content-type: text/html') {
-        return "html";
+
+
+if (! function_exists('print_ln')) {
+    function print_ln($msg)
+    {
+        print($msg."\n");
     }
 }
+
+if (! function_exists('println')) {
+    function println($msg)
+    {
+        print($msg."\n");
+    }
+}
+
+if (! function_exists('print_br')) {
+    function print_br($msg)
+    {
+        print($msg."<br>");
+    }
+}
+
+if (! function_exists('printbr')) {
+    function printbr($msg)
+    {
+        if (\is_array($msg) || \is_object($msg)) {
+            echo "<pre>";
+            echo "<div style='border:1px solid #ccc;padding:5px;'>";
+            print_r($msg);
+            echo "</div>";
+            echo "</pre>";
+        } else {
+            print($msg."<br>");
+        }
+        
+    }
+}
+
 
 
 if (! function_exists('windows_os')) {
@@ -87,5 +115,9 @@ if (! function_exists('country')) {
         }
     }
 }
+
+
+
+require "Jiny.php";
 
 
