@@ -10,8 +10,6 @@
 use \Jiny\Core\Registry\Registry;
 
 
-
-
 if (! function_exists('print_ln')) {
     function print_ln($msg)
     {

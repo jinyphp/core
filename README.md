@@ -1,15 +1,12 @@
 # jinyPHP core
-본 코드는 `PHP`언어로 작성된 `composer` 페키지 입니다. 또한 `jinyPHP` 프레임워크와 같이 동작을 합니다.
-지니PHP는 MVC 패턴의 웹프레임워크 입니다.
-
+본 페키지는 `jinyPHP`의 응용소프트웨어를 생성할 수 있는 공용 패키지 입니다.  
 
 ## 설치방법
-composer를 통하여 설치를 진행할 수 있습니다.
+`composer`를 통하여 core를 설치할 수 있습니다.
 
 ```php
 composer require jiny/core
 ```
-
 
 ## 소스경로
 모든 코드는 깃허브 저장소에 공개되어 있습니다.

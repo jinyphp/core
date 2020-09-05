@@ -89,9 +89,11 @@ function type()
     }
 }
 
+
 /**
  * jinyPHP 응용서비스의 객체를 생성합니다.
  */
+/*
 function bootstart($map=null)
 {
     $type = isset($_SERVER['CONTENT_TYPE']) ? $_SERVER['CONTENT_TYPE'] : null;
@@ -105,3 +107,4 @@ function bootstart($map=null)
     // Web 응용 프로그램
     return new \Jiny\App\Application();
 }
+*/
