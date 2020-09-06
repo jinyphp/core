@@ -3,9 +3,12 @@ namespace jiny;
 
 
 if (! function_exists('error')) {
-    function error($msg)
+    function error(...$msg)
     {
-        print($msg."<br>");
+        foreach ($msg as $m) {
+            print($m."<br>");
+        }
+        exit;   
     }
 }
 

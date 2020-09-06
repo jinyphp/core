@@ -14,7 +14,7 @@ class Boot
 {    
     public function __construct()
     {
-        echo __CLASS__;
+        // echo __CLASS__;
     }
 
     private function contentType()
